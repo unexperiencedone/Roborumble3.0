@@ -29,7 +29,7 @@ const EventModal = ({ event, onClose }) => {
         </button>
 
         {/* --- LEFT SIDE: IMAGE --- */}
-        <div className="w-full md:w-[35%] lg:w-[40%] h-40 sm:h-56 md:h-auto relative bg-black">
+        <div className="w-full md:w-[35%] lg:w-[40%] h-32 sm:h-56 md:h-auto relative bg-black">
           <div className="absolute inset-0 opacity-60">
              <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
           </div>
@@ -37,79 +37,69 @@ const EventModal = ({ event, onClose }) => {
         </div>
 
         {/* --- RIGHT SIDE: CONTENT --- */}
-        <div className="w-full md:w-[65%] lg:w-[60%] p-4 sm:p-8 md:p-10 flex flex-col md:overflow-y-auto custom-scrollbar bg-[#0f1014]">
+        <div className="w-full md:w-[65%] lg:w-[60%] px-4 py-6 sm:p-8 md:p-10 flex flex-col overflow-y-auto scrollbar-hide md:custom-scrollbar bg-[#0f1014]">
           
           {/* Header */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-4 sm:mb-6 pt-2 md:pt-0">
             <h2 
               className="font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)] font-[Oswald] uppercase tracking-wide mb-2 leading-[1.1]"
-              style={{ fontSize: "clamp(24px, 4.5vw, 48px)" }}
+              style={{ fontSize: "clamp(22px, 4.5vw, 48px)" }}
             >
               {event.title}
             </h2>
-            <p className="text-slate-400 text-xs sm:text-sm md:text-base tracking-wide leading-relaxed">
+            <p className="text-slate-400 text-[10px] sm:text-sm md:text-base tracking-wide leading-relaxed">
               {event.desc}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-2 sm:gap-4 mb-6 sm:mb-8">
             {isCompetition && event.prize && (
-              <div className="bg-[#1a1c23] border border-yellow-500/30 px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 sm:gap-3">
-                <Trophy className="text-yellow-500" size={16} />
-                <div>
-                  <span className="block text-[8px] sm:text-[10px] text-slate-500 uppercase font-bold">Prize Pool</span>
-                  <span className="text-yellow-400 font-bold text-xs sm:text-sm">{event.prize}</span>
+              <div className="bg-[#1a1c23] border border-yellow-500/30 px-2 sm:px-4 py-2 rounded-lg flex items-center gap-2 sm:gap-3">
+                <Trophy className="text-yellow-500 shrink-0" size={14} />
+                <div className="min-w-0">
+                  <span className="block text-[8px] sm:text-[10px] text-slate-500 uppercase font-bold truncate">Prize Pool</span>
+                  <span className="text-yellow-400 font-bold text-[10px] sm:text-sm truncate">{event.prize}</span>
                 </div>
               </div>
             )}
 
-            <div className="bg-[#1a1c23] border border-slate-700 px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 sm:gap-3">
-              <Users className="text-cyan-400" size={16} />
-              <div>
-                <span className="block text-[8px] sm:text-[10px] text-slate-500 uppercase font-bold">Eligibility</span>
-                <span className="text-slate-200 font-bold text-xs sm:text-sm">{event.eligibility || "Open for All"}</span>
+            <div className="bg-[#1a1c23] border border-slate-700 px-2 sm:px-4 py-2 rounded-lg flex items-center gap-2 sm:gap-3">
+              <Users className="text-cyan-400 shrink-0" size={14} />
+              <div className="min-w-0">
+                <span className="block text-[8px] sm:text-[10px] text-slate-500 uppercase font-bold truncate">Eligibility</span>
+                <span className="text-slate-200 font-bold text-[10px] sm:text-sm truncate">{event.eligibility || "Open for All"}</span>
               </div>
             </div>
-
-            {!isCompetition && (
-                <div className="bg-[#1a1c23] border border-purple-500/30 px-4 py-2 rounded-lg flex items-center gap-3">
-                  <Mic className="text-purple-400" size={18} />
-                  <div>
-                    <span className="block text-[10px] text-slate-500 uppercase font-bold">Type</span>
-                    <span className="text-purple-300 font-bold text-sm uppercase">{event.type}</span>
-                  </div>
-                </div>
-            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
              {isCompetition ? (
                 <div>
-                    <h4 className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-3">Rounds</h4>
+                    <h4 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold mb-2 sm:mb-3">Rounds</h4>
                     <div className="flex items-start gap-3">
-                        <Globe size={16} className="text-cyan-500 mt-1" />
+                        <Globe size={14} className="text-cyan-500 mt-1 shrink-0" />
                         <div>
-                            <h5 className="text-white text-sm font-bold">Finals (Offline)</h5>
-                            <p className="text-slate-500 text-xs mt-1">Hosted at Campus Arena.</p>
+                            <h5 className="text-white text-xs sm:text-sm font-bold">Finals (Offline)</h5>
+                            <p className="text-slate-500 text-[10px] mt-1">Hosted at Campus Arena.</p>
                         </div>
                     </div>
                 </div>
              ) : (
                 <div>
-                    <h4 className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-3">Details</h4>
+                    <h4 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold mb-2 sm:mb-3">Details</h4>
                     <div className="flex items-start gap-3">
-                        <MapPin size={16} className="text-purple-500 mt-1" />
+                        <MapPin size={14} className="text-purple-500 mt-1 shrink-0" />
                         <div>
-                            <h5 className="text-white text-sm font-bold">Venue</h5>
-                            <p className="text-slate-500 text-xs mt-1">{event.venue || "Main Auditorium"}</p>
+                            <h5 className="text-white text-xs sm:text-sm font-bold">Venue</h5>
+                            <p className="text-slate-500 text-[10px] mt-1">{event.venue || "Main Auditorium"}</p>
                         </div>
                     </div>
                 </div>
              )}
 
              <div>
-                <h4 className="text-slate-500 text-xs uppercase tracking-widest font-bold mb-3">Point of Contact</h4>
-                <p className="text-white text-sm font-medium">Devanshu: +91 98765 43210</p>
+                <h4 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold mb-2 sm:mb-3">Point of Contact</h4>
+                <p className="text-white text-xs sm:text-sm font-medium">Devanshu: +91 98765 43210</p>
              </div>
           </div>
 
