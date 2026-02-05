@@ -30,7 +30,7 @@ export default function Navbar() {
 
   const sabLinks = [
     { href: "/", label: "HOME" },
-    { href: "/events", label: "EVENTS" },
+    { href: "/dashboard/events", label: "EVENTS" },
     { href: "/schedule", label: "SCHEDULE" },
     { href: "/patrons", label: "PATRONS" },
     { href: "/contacts", label: "OUR TEAM" },
@@ -102,11 +102,11 @@ export default function Navbar() {
           })}
 
           <Link
-            href="/register"
+            href="/dashboard"
             className="ml-6 group relative px-6 py-2 text-xs font-bold tracking-[0.2em] uppercase text-white transition-all duration-300"
           >
             <span className="absolute -top-[2px] -left-[6px] text-white/50 transition-all duration-300 group-hover:text-[#FFD700] group-hover:-translate-x-1 group-hover:-translate-y-1">[</span>
-            <AnimatedText text="REGISTER" isActive={false} />
+            <AnimatedText text="DASHBOARD" isActive={false} />
             <span className="absolute -bottom-[2px] -right-[6px] text-white/50 transition-all duration-300 group-hover:text-[#FFD700] group-hover:translate-x-1 group-hover:translate-y-1">]</span>
           </Link>
         </div>
@@ -151,12 +151,12 @@ export default function Navbar() {
               ))}
 
               <Link
-                href="/register"
+                href="/dashboard"
                 onClick={() => setMenuKhula(false)}
                 className="mt-4 px-8 py-3 bg-[#FFD700] text-[#0a0a0a] text-sm font-bold tracking-[0.2em] uppercase hover:bg-white transition-colors duration-300 clip-path-polygon"
                 style={{ clipPath: "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)" }}
               >
-                REGISTER NOW
+                DASHBOARD
               </Link>
             </div>
 

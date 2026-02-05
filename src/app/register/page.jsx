@@ -1,16 +1,18 @@
-import React from 'react'
-import SciFiCard from '../../../components/Register/CircuitPattern'
-import RegistrationForm from '../../../components/Register/RegistrationForm'
+"use client";
 
-const page = () => {
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function RegisterRedirect() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/dashboard");
+  }, [router]);
+
   return (
-    <div>
-      <SciFiCard>
-        <RegistrationForm/>
-      </SciFiCard>
-      
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] text-white">
+      <p>Redirecting to Dashboard...</p>
     </div>
-  )
+  );
 }
-
-export default page

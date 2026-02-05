@@ -12,7 +12,7 @@ const Footer = () => {
     { name: 'Events', url: '/events' },
     { name: 'Schedule', url: '/schedule' },
     { name: 'Gallery', url: '/gallery' },
-    { name: 'Register', url: '/register' }, // 👈 Register Link
+    { name: 'Register', url: '/dashboard' }, // 👈 Register Link
   ];
 
   // 2. Define Links for "Festival" Column

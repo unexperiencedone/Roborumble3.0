@@ -32,7 +32,7 @@ const HeroSection = () => {
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-[#01020a] flex flex-col font-sans">
-      
+
       {/* LAYER 0: CYBER GRID */}
       <div
         className="absolute inset-0 z-0 opacity-[0.15] pointer-events-none"
@@ -81,16 +81,16 @@ const HeroSection = () => {
 
       {/* LAYER 2: HERO SECTION CONTENT */}
       <div className="relative z-10 w-full flex-grow flex flex-col items-center justify-center pt-24 md:pt-32">
-        
+
         {/* ROBOT IMAGE */}
         <motion.div
-          className="relative w-full flex justify-center" 
+          className="relative w-full flex justify-center"
           initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1, y: [-10, 10, -10] }} 
-          transition={{ 
+          animate={{ opacity: 1, scale: 1, y: [-10, 10, -10] }}
+          transition={{
             opacity: { duration: 1 },
             scale: { duration: 1 },
-            y: { duration: 6, repeat: Infinity, ease: "easeInOut" } 
+            y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
           }}
         >
           <img
@@ -137,9 +137,24 @@ const HeroSection = () => {
             </div>
           </motion.div>
 
-          {/* REGISTER BUTTON (Added this so users can go to registration page) */}
-          
-
+          {/* REGISTER BUTTON */}
+          <Link href="/dashboard">
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              whileHover={{ scale: 1.1, boxShadow: "0 0 20px rgba(0, 255, 255, 0.6)" }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-transparent border-2 border-cyan-400 text-cyan-400 font-bold uppercase tracking-widest rounded-full hover:bg-cyan-400 hover:text-black transition-all duration-300 shadow-[0_0_10px_rgba(34,211,238,0.3)] relative overflow-hidden group"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                Launch Dashboard
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 group-hover:translate-x-1 transition-transform">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </span>
+            </motion.button>
+          </Link>
         </div>
       </div>
     </div>
