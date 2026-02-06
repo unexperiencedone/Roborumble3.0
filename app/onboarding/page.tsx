@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { LogOut, ArrowLeft } from "lucide-react";
 
 const AVAILABLE_INTERESTS = [
     "Robotics",
@@ -117,12 +118,21 @@ export default function OnboardingPage() {
                             Tell us about yourself to get started
                         </p>
                     </div>
-                    <SignOutButton>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors">
-                            <LogOut size={18} />
-                            Logout
-                        </button>
-                    </SignOutButton>
+                    <div className="flex gap-3">
+                        <Link
+                            href="/dashboard"
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
+                        >
+                            <ArrowLeft size={18} />
+                            Back
+                        </Link>
+                        <SignOutButton>
+                            <button className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors">
+                                <LogOut size={18} />
+                                Logout
+                            </button>
+                        </SignOutButton>
+                    </div>
                 </div>
 
                 {/* Form */}

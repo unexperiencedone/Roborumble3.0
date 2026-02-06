@@ -56,7 +56,7 @@ export default function CustomCursor() {
     }, [cursorX, cursorY]);
 
     return (
-        <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999] overflow-hidden hidden md:block mix-blend-difference">
+        <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[99999] overflow-hidden hidden md:block mix-blend-difference">
 
             {/* 1. Core Target Dot (Immediate response) */}
             <motion.div
