@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
+import MatrixBackground from "../components/MatrixBackground";
 import { SlotText } from "../components/SlotText";
 import Footer from "../components/Footer";
 import { useAudio } from "../hooks/useAudio";
@@ -13,6 +13,7 @@ interface CardData {
   shortDesc: string;
   fullDesc: string;
   specs: string[];
+  image?: string;
 }
 
 // --- Internal Component: AboutCard ---
@@ -37,7 +38,7 @@ const AboutCard = ({ data, delay }: { data: CardData; delay: number }) => {
     if (showDetails || isLoading) return; // Prevent re-opening
     setIsLoading(true);
     playOpenSound();
-
+    
     setTimeout(() => {
       setIsLoading(false);
       setShowDetails(true);
@@ -53,37 +54,48 @@ const AboutCard = ({ data, delay }: { data: CardData; delay: number }) => {
   };
 
   return (
-    <div
-      className="relative group cursor-pointer"
+    <div 
+      className="relative group cursor-pointer" 
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Main Preview Card */}
-      <div
+      <div 
         className="relative p-8 bg-black/40 border-l-4 border-t border-[#00F0FF]/50 hover:bg-[#00F0FF]/10 transition-all duration-500 backdrop-blur-sm h-full"
         style={{ clipPath: 'polygon(0 0, 90% 0, 100% 10%, 100% 100%, 10% 100%, 0 90%)' }}
       >
-        <div className="text-[#00F0FF] font-mono text-[10px] mb-4 opacity-50 tracking-tighter uppercase">
+        <div className="text-[#00F0FF] font-mono text-[10px] mb-4 opacity-50 tracking-tighter uppercase relative z-10">
           // SUBJECT_ID: {data.title.replace(/\s+/g, '_')}
         </div>
-        <div className="w-14 h-14 mb-6 border border-[#00F0FF]/40 flex items-center justify-center bg-[#00F0FF]/10 text-3xl shadow-[0_0_15px_rgba(0,240,255,0.2)]">
-          {data.icon}
-        </div>
-        <h3 className="text-2xl font-black text-white mb-4 font-mono tracking-tighter uppercase group-hover:text-[#00F0FF] transition-colors">
+        
+        {data.image ? (
+            <div className="absolute inset-0 z-0">
+                 {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={data.image} alt={data.title} className="w-full h-full object-cover opacity-80 grayscale group-hover:grayscale-0 transition-all duration-500" />
+                <div className="absolute inset-0 bg-black/20" />
+            </div>
+        ) : (
+             <div className="w-14 h-14 mb-6 border border-[#00F0FF]/40 flex items-center justify-center bg-[#00F0FF]/10 text-3xl shadow-[0_0_15px_rgba(0,240,255,0.2)] relative z-10">
+              {data.icon}
+            </div>
+        )}
+       
+        <h3 className="text-2xl font-black text-white mb-4 font-mono tracking-tighter uppercase group-hover:text-[#00F0FF] transition-colors relative z-10">
           {data.title}
         </h3>
-        <p className="text-gray-500 font-mono text-xs leading-relaxed uppercase">
+        <p className="text-gray-500 font-mono text-xs leading-relaxed uppercase relative z-10">
           {data.shortDesc}
         </p>
-        {isHovered && <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00F0FF]/20 to-transparent h-[20%] w-full animate-scan pointer-events-none" />}
+        
+        {isHovered && <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00F0FF]/20 to-transparent h-[20%] w-full animate-scan pointer-events-none z-20" />}
       </div>
 
       {/* Expanded Large Dialog Box */}
       {(isLoading || showDetails) && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 md:p-4 lg:p-12 pointer-events-none">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" />
-
+          
           <div className="relative w-full max-w-sm md:max-w-3xl lg:max-w-5xl bg-[#050505] border border-[#FF003C] p-1 shadow-[0_0_80px_rgba(255,0,60,0.4)] pointer-events-auto overflow-hidden animate-glitch-entry">
             {/* Top Red Status Bar */}
             <div className="bg-[#FF003C] text-black px-3 md:px-6 py-2 flex justify-between items-center font-mono text-[9px] md:text-[11px] font-black uppercase tracking-widest">
@@ -107,8 +119,13 @@ const AboutCard = ({ data, delay }: { data: CardData; delay: number }) => {
                 <div className="grid md:grid-cols-2 gap-16">
                   <div className="space-y-8">
                     <div className="aspect-video bg-zinc-950 border border-[#FF003C]/30 relative flex items-center justify-center group overflow-hidden">
-                      <span className="text-9xl opacity-20 filter blur-[2px]">{data.icon}</span>
-                      <div className="absolute inset-0 border-[30px] border-transparent border-t-[#FF003C]/5 border-l-[#FF003C]/5" />
+                       {data.image ? (
+                           // eslint-disable-next-line @next/next/no-img-element
+                           <img src={data.image} alt={data.title} className="w-full h-full object-cover opacity-90" />
+                       ) : (
+                           <span className="text-9xl opacity-20 filter blur-[2px]">{data.icon}</span>
+                       )}
+                       <div className="absolute inset-0 border-[30px] border-transparent border-t-[#FF003C]/5 border-l-[#FF003C]/5" />
                     </div>
                     <div className="grid grid-cols-2 gap-6 font-mono text-[8px] md:text-[10px]">
                       <div className="p-4 border border-[#FF003C]/20 bg-red-950/5">
@@ -143,10 +160,10 @@ const AboutCard = ({ data, delay }: { data: CardData; delay: number }) => {
                   </div>
                 </div>
               )}
-
+              
               {/* Mobile Close Button at Bottom */}
               <div className="md:hidden border-t border-[#FF003C]/30 p-4">
-                <button
+                <button 
                   onClick={handleClose}
                   className="w-full bg-[#FF003C] text-black py-3 font-black font-mono text-xs uppercase tracking-widest hover:bg-[#FF003C]/80 transition-all"
                 >
@@ -169,67 +186,74 @@ const AboutCard = ({ data, delay }: { data: CardData; delay: number }) => {
 export default function AboutPage() {
   const cards: CardData[] = [
     {
-      title: "OUR MISSION",
-      icon: "🎯",
-      shortDesc: "Foster innovation and hands-on engineering excellence",
-      fullDesc: "To foster a culture of innovation and hands-on engineering among students, providing a platform to test their skills against the best. We believe in learning by doing, competing by creating, and evolving through collaboration.",
-      specs: ["Neural-Net Integration", "Collaborative Frameworks", "Peer-to-Peer Benchmarking"]
+      title: "HANDS-ON LEARNING",
+      icon: "🛠️",
+      shortDesc: "Promote hands-on learning and innovation",
+      fullDesc: "The objective of Robo Rumble is to promote hands-on learning and innovation in robotics and emerging technologies.",
+      specs: ["Practical Workshops", "Real-world Challenges", "Innovation Hub"],
+      image: "/cyberpunk_robotics_innovation.jpg"
     },
     {
-      title: "THE TECHNOLOGY",
+      title: "THEORY TO PRACTICE",
       icon: "⚡",
-      shortDesc: "Cutting-edge robotics, AI, IoT, and embedded systems",
-      fullDesc: "Focusing on autonomous robotics, IoT, AI, and embedded systems. We celebrate cutting-edge tech in every event. From line-following bots to AI-powered autonomous systems, we push the boundaries of what's possible.",
-      specs: ["NVIDIA Jetson Edge", "RTK-GPS Navigation", "Low-Latency Telemetry"]
+      shortDesc: "Bridge the gap between theory and practice",
+      fullDesc: "It aims to bridge the gap between theory and practice while fostering problem-solving, teamwork, and leadership skills.",
+      specs: ["Applied Engineering", "Problem Solving", "Strategic Leadership"],
+      image: "/cyberpunk_engineering_practice.jpg"
     },
     {
-      title: "FUTURE VISION",
-      icon: "🚀",
-      shortDesc: "Building tomorrow's makers and problem solvers",
-      fullDesc: "Building a community of makers and problem solvers who will drive the technological advancements of tomorrow. We're not just organizing events; we're cultivating the next generation of engineers and innovators.",
-      specs: ["Incubation Program", "Industry 5.0 Alignment", "Sustainable Prototyping"]
-    }
+      title: "COLLABORATIVE SPIRIT",
+      icon: "🤝",
+      shortDesc: "Strengthen technical culture and collaboration",
+      fullDesc: "The event also seeks to strengthen the technical culture and collaborative spirit among students.",
+      specs: ["Team Synergy", "Tech Culture", "Peer Learning"],
+      image: "/cyberpunk_team_collaboration.jpg"
+    },
   ];
 
   return (
-    <main className="min-h-screen bg-transparent text-white relative overflow-hidden">
+    <main className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Background Matrix Effect */}
-
-
+      <MatrixBackground color="#043352ff" text="" />
+      
       {/* Navbar Overlay */}
 
       <div className="relative z-10 pt-40 pb-20 container mx-auto px-4 md:px-8">
         {/* Page Header */}
         <div className="mb-20 text-center">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-[2px] w-20 bg-[#FF003C]" />
-            <span className="text-[#FF003C] font-mono text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.4em] uppercase">INITIATING_ARCHIVE_RECALL</span>
+             <div className="h-[2px] w-20 bg-[#FF003C]" />
+             <span className="text-[#FF003C] font-mono text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.4em] uppercase">INITIATING_ARCHIVE_RECALL</span>
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-8xl font-black font-mono tracking-tighter uppercase leading-[0.85] mb-8 break-words">
             {/* Multi-layered Glitch Effect - Simplified */}
             <div className="relative inline-block glitch-container">
               {/* Red glitch layer */}
               <span className="absolute top-0 left-0 text-[#FF003C] mix-blend-screen opacity-70 glitch-layer-red" style={{ transform: 'translate(-0.02em, 0.02em)' }}>
-                ABOUT THE
+                ABOUT ROBO
               </span>
               {/* Cyan glitch layer */}
               <span className="absolute top-0 left-0 text-[#00F0FF] mix-blend-screen opacity-60 glitch-layer-cyan" style={{ transform: 'translate(0.03em, -0.02em)' }}>
-                ABOUT THE
+                ABOUT ROBO
               </span>
               {/* Main white layer */}
               <span className="relative text-white">
-                ABOUT THE
+                ABOUT ROBO
               </span>
             </div>
             <br />
             <div className="flex justify-center w-full">
-              <SlotText text="LEGACY_" className="text-4xl md:text-6xl lg:text-8xl" />
+              <SlotText text="RUMBLE_" className="text-4xl md:text-6xl lg:text-8xl text-[#00F0FF]" />
             </div>
           </h1>
           <div className="max-w-2xl mx-auto">
             <p className="text-zinc-500 text-lg leading-relaxed font-mono border-l-2 border-[#FF003C] pl-6 py-2 bg-gradient-to-r from-[#FF003C]/5 to-transparent">
-              Robo Rumble evolved from a local collegiate meet into a premier technology frontier.
-              Now in its third cycle, we explore the intersection of human creativity and robotic precision.
+              Robo Rumble is UIET’s flagship technical event dedicated to robotics, innovation, and hands-on engineering experience. It
+              provides a platform for students to explore emerging technologies, apply theoretical knowledge to real-world challenges, and work
+              collaboratively in a competitive yet learning-focused environment.
+              <br /><br />
+              With each edition, Robo Rumble has established itself as one of the most successful and impactful technical events at UIET. Robo
+              Rumble 3.0 aims to further enhance technical excellence, participation, and overall event quality.
             </p>
           </div>
         </div>
@@ -243,7 +267,7 @@ export default function AboutPage() {
 
         {/* Timeline Summary */}
         <div className="bg-zinc-950/50 border border-white/5 p-6 md:p-10 lg:p-16 backdrop-blur-xl relative overflow-hidden"
-          style={{ clipPath: 'polygon(40px 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%, 0 40px)' }}>
+             style={{ clipPath: 'polygon(40px 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%, 0 40px)' }}>
           <div className="relative z-10 grid md:grid-cols-2 gap-8 md:gap-16 items-center">
             <div className="space-y-4 md:space-y-6 text-center md:text-left">
               <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-white font-mono uppercase tracking-tighter break-words">

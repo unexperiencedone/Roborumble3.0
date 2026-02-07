@@ -63,7 +63,7 @@ const teamData = {
     {
       name: "Shivansh Singh",
       role: "Logistic Head",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         {
           icon: FaInstagram,
@@ -92,7 +92,7 @@ const teamData = {
     {
       name: "Vaishnavi Singh",
       role: "Hospitality Head",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         { icon: FaInstagram, link: "#" },
         {
@@ -118,7 +118,7 @@ const teamData = {
     {
       name: "Neha Singh",
       role: "Artistic head",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         { icon: FaInstagram, link: "https://www.instagram.com/nehaart55" },
         {
@@ -131,7 +131,7 @@ const teamData = {
     {
       name: "Abhirup Dewanjee",
       role: "Artistic head",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         { icon: FaInstagram, link: "https://www.instagram.com/_adx_art" },
         {
@@ -144,7 +144,7 @@ const teamData = {
     {
       name: "Shruti Gupta",
       role: "Artistic Head",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         {
           icon: FaInstagram,
@@ -173,7 +173,7 @@ const teamData = {
     {
       name: "Akshat Darshi",
       role: "Tech Team Head",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         { icon: FaInstagram, link: "https://www.instagram.com/akshat_darshi" },
         {
@@ -186,7 +186,7 @@ const teamData = {
     {
       name: "Kriti Dwivedi",
       role: "Developer",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         {
           icon: FaInstagram,
@@ -199,7 +199,7 @@ const teamData = {
     {
       name: "Jai Verma",
       role: "Tech Team Head",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         { icon: FaInstagram, link: "https://www.instagram.com/_jaii.verrma_/" },
         {
@@ -212,7 +212,7 @@ const teamData = {
     {
       name: "Anant Tirupati",
       role: "Technical Lead",
-      img: "/skull.png",
+      img: "/skull-1.png",
       socials: [
         { icon: FaInstagram, link: "#" },
         { icon: FaLinkedinIn, link: "#" },
@@ -222,7 +222,49 @@ const teamData = {
     {
       name: "Aakshant Kumar",
       role: "Technical Lead",
-      img: "/skull.png",
+      img: "/skull-1.png",
+      socials: [
+        { icon: FaInstagram, link: "#" },
+        { icon: FaLinkedinIn, link: "#" },
+        { icon: HiOutlineMail, link: "#" },
+      ],
+    },
+  ],
+  contributors: [
+    {
+      name: "Contributor 1",
+      role: "Contributor",
+      img: "/skull-1.png",
+      socials: [
+        { icon: FaInstagram, link: "#" },
+        { icon: FaLinkedinIn, link: "#" },
+        { icon: HiOutlineMail, link: "#" },
+      ],
+    },
+    {
+      name: "Contributor 2",
+      role: "Contributor",
+      img: "/skull-1.png",
+      socials: [
+        { icon: FaInstagram, link: "#" },
+        { icon: FaLinkedinIn, link: "#" },
+        { icon: HiOutlineMail, link: "#" },
+      ],
+    },
+    {
+      name: "Contributor 3",
+      role: "Contributor",
+      img: "/skull-1.png",
+      socials: [
+        { icon: FaInstagram, link: "#" },
+        { icon: FaLinkedinIn, link: "#" },
+        { icon: HiOutlineMail, link: "#" },
+      ],
+    },
+    {
+      name: "Contributor 4",
+      role: "Contributor",
+      img: "/skull-1.png",
       socials: [
         { icon: FaInstagram, link: "#" },
         { icon: FaLinkedinIn, link: "#" },
@@ -233,7 +275,9 @@ const teamData = {
 };
 
 export default function TeamSection() {
-  const [activeTeam, setActiveTeam] = useState<"core" | "tech">("core");
+  const [activeTeam, setActiveTeam] = useState<
+    "core" | "tech" | "contributors"
+  >("core");
   const [selectedMember, setSelectedMember] = useState(teamData.core[0]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -322,7 +366,7 @@ export default function TeamSection() {
       {/* MOBILE VIEW */}
       <div className="md:hidden flex flex-col w-full relative z-10 px-2">
         <div className="flex justify-center gap-4 mb-8 shrink-0">
-          {["core", "tech"].map((team) => (
+          {["core", "tech", "contributors"].map((team) => (
             <button
               key={team}
               onClick={() => setActiveTeam(team as "core" | "tech")}
@@ -332,7 +376,11 @@ export default function TeamSection() {
                   : "bg-transparent border-zinc-700 text-zinc-500"
               }`}
             >
-              {team === "core" ? "Core Team" : "Tech Team"}
+              {team === "core"
+                ? "Core Team"
+                : team === "tech"
+                  ? "Tech Team"
+                  : "Contributors"}
             </button>
           ))}
         </div>
@@ -414,13 +462,19 @@ export default function TeamSection() {
       {/* DESKTOP VIEW */}
       <div className="hidden md:flex flex-col items-center justify-center w-full max-w-7xl">
         <div className="flex gap-8 mb-12">
-          {["core", "tech"].map((team) => (
+          {["core", "tech", "contributors"].map((team) => (
             <button
               key={team}
-              onClick={() => setActiveTeam(team as "core" | "tech")}
+              onClick={() =>
+                setActiveTeam(team as "core" | "tech" | "contributors")
+              }
               className={`px-10 py-3 text-sm font-bold uppercase tracking-widest transition-all duration-300 border-2 rounded-lg ${activeTeam === team ? "text-[#00F0FF] border-[#00F0FF] shadow-[0_0_15px_#00F0FF]" : "text-zinc-500 border-white/20 hover:text-white"}`}
             >
-              {team === "core" ? "Core Team" : "Tech Team"}
+              {team === "core"
+                ? "Core Team"
+                : team === "tech"
+                  ? "Tech Team"
+                  : "Contributors"}
             </button>
           ))}
         </div>

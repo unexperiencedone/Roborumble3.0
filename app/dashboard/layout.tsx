@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { UserButton, SignOutButton } from "@clerk/nextjs";
-import { Home, Users, Trophy, FileText, Settings, LogOut, ArrowLeft } from "lucide-react";
+import { Home, Users, Trophy, FileText, Settings, LogOut } from "lucide-react";
 
 const navItems = [
-    { href: "/", label: "Back to Home", icon: ArrowLeft },
-    { href: "/dashboard", label: "Dashboard", icon: Home },
+    { href: "/dashboard", label: "Home", icon: Home },
     { href: "/dashboard/team", label: "My Team", icon: Users },
     { href: "/dashboard/events", label: "Events", icon: Trophy },
     { href: "/dashboard/registrations", label: "Registrations", icon: FileText },
@@ -26,17 +24,10 @@ export default function DashboardLayout({
             {/* Sidebar */}
             <aside className="w-64 bg-gray-900 border-r border-gray-800 p-4 flex flex-col">
                 <div className="mb-8">
-                    <div className="mb-8">
-                        <Link href="/home" className="flex items-center gap-3 group">
-                            <div className="relative w-10 h-10">
-                                <Image src="/Skull.png" alt="Logo" fill className="object-contain" />
-                            </div>
-                            <span className="text-white font-black text-xl tracking-tighter group-hover:text-[#00E5FF] transition-colors">
-                                ROBO RUMBLE
-                            </span>
-                        </Link>
-                        <p className="text-gray-500 text-xs mt-2 font-mono tracking-widest pl-13"> DASHBOARD</p>
-                    </div>
+                    <h1 className="text-xl font-bold text-white">
+                        Robo Rumble
+                    </h1>
+                    <p className="text-gray-500 text-sm">Dashboard</p>
                 </div>
 
                 <nav className="flex-1 space-y-2">
