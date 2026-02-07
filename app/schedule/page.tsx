@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-
-import { SlotText } from "../components/SlotText";
+import { motion, AnimatePresence } from "framer-motion";
+import MatrixBackground from "../components/MatrixBackground";
 import Footer from "../components/Footer";
 import { Clock, MapPin, Activity, ShieldAlert, Terminal } from "lucide-react";
 import { useAudio } from "../hooks/useAudio";
@@ -112,22 +111,67 @@ export default function SchedulePage() {
   const activeDay = scheduleData.find((d) => d.id === activeTab);
 
   return (
-    <main className="min-h-screen bg-transparent text-white relative overflow-hidden">
-      {/* Background Matrix Effect */}
+    <main className="min-h-screen bg-black text-white relative overflow-hidden font-sans selection:bg-[#00FF9E] selection:text-black">
+      {/* Import Font */}
+      <style jsx global>{`
+        @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap");
 
+        @keyframes scan {
+          0% {
+            top: -20%;
+          }
+          100% {
+            top: 120%;
+          }
+        }
+        .animate-scan {
+          position: absolute;
+          animation: scan 2s linear infinite;
+        }
+      `}</style>
 
-      <div className="relative z-10 pt-40 pb-20 container mx-auto px-4 md:px-8">
-        {/* Page Header */}
-        <div className="mb-20 text-center">
-          <div className="flex items-center justify-center gap-2 md:gap-4 mb-4">
-            <div className="h-[2px] w-12 md:w-20 bg-[#FF003C]" />
-            <span className="text-[#FF003C] font-mono text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.4em] uppercase">SYNCHRONIZING_SYSTEM_CLOCK</span>
-          </div>
+      {/* Background Matrix Effect (Preserved) */}
+      <MatrixBackground color="#003B00" text="" />
 
-          <h1 className="text-4xl md:text-6xl lg:text-8xl font-black font-mono tracking-tighter uppercase leading-[0.85] mb-8 break-words">
-            <div className="relative inline-block glitch-container">
-              <span className="absolute top-0 left-0 text-[#FF003C] mix-blend-screen opacity-70 glitch-layer-red" style={{ transform: 'translate(-0.02em, 0.02em)' }}>
-                EVENT
+      {/* Central Glow Effect Overlay */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-[#00FF9E]/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
+
+      <div className="relative z-10 flex flex-col items-center pt-32 pb-20 px-4 min-h-screen">
+        {/* --- TITLE --- */}
+        <h1
+          className="text-3xl md:text-7xl font-black tracking-widest uppercase mb-16 text-center font-['Orbitron']"
+          style={{
+            background: "linear-gradient(to bottom, #00F0FF, #00FF9E)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            filter: "drop-shadow(0 0 10px rgba(0, 255, 158, 0.5))",
+          }}
+        >
+          SCHEDULE
+        </h1>
+
+        {/* --- TABS --- */}
+        <div className="flex flex-wrap justify-center gap-8 mb-16">
+          {scheduleData.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`
+                relative px-8 py-4 md:px-12 md:py-6 rounded-lg border-2 
+                flex flex-col items-center justify-center cursor-pointer
+                transition-all duration-500 ease-out group font-['Orbitron']
+                ${
+                  activeTab === item.id
+                    ? "border-[#00FF9E] bg-[#00FF00]/10 shadow-[0_0_30px_rgba(0,255,0,0.4)] scale-105"
+                    : "border-zinc-800 bg-black/50 text-zinc-500 hover:border-[#00FF9E]/50 hover:text-[#00FF9E]/80"
+                }
+              `}
+            >
+              <span
+                className={`text-xl md:text-3xl font-bold transition-colors duration-300 
+                  ${activeTab === item.id ? "text-[#00FF9E] drop-shadow-[0_0_10px_rgba(0,255,0,0.8)]" : ""}`}
+              >
+                {item.date} {item.month}
               </span>
 
               <span
@@ -136,79 +180,46 @@ export default function SchedulePage() {
               >
                 {item.dayName}
               </span>
-              <span className="relative text-white">EVENT</span>
-            </div>
-            <br />
-            <div className="flex justify-center w-full">
-              <SlotText text="TIMELINE_" className="text-4xl md:text-6xl lg:text-8xl" />
-            </div>
-          </h1>
 
-          <div className="max-w-2xl mx-auto">
-            <p className="text-zinc-500 text-lg leading-relaxed font-mono border-l-2 border-[#FF003C] pl-6 py-2 bg-gradient-to-r from-[#FF003C]/5 to-transparent uppercase text-xs">
-              Monitor real-time operational schedule. Track all active deployment zones and engagement windows across the campus grid.
-            </p>
-          </div>
+              {activeTab === item.id && (
+                <>
+                  <span className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-[#00FF9E]"></span>
+                  <span className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-[#00FF9E]"></span>
+                </>
+              )}
+            </button>
+          ))}
         </div>
 
-        {/* Timeline Content */}
-        <div className="space-y-32">
-          {schedule.map((dayBlock, dayIndex) => (
-            <div key={dayIndex} className="relative">
-              {/* Day Header */}
-              <div className="flex items-center gap-6 mb-12">
-                <div className="w-12 h-12 border border-[#00F0FF]/50 flex items-center justify-center bg-[#00F0FF]/10 text-[#00F0FF] font-mono font-bold">
-                  0{dayIndex + 1}
-                </div>
-                <h2 className="text-4xl font-black text-white font-mono uppercase tracking-tighter italic">
-                  {dayBlock.day}
-                </h2>
-                <div className="flex-grow h-[1px] bg-gradient-to-r from-[#00F0FF]/30 to-transparent" />
-              </div>
+        {/* --- EVENTS CONTENT --- */}
+        <div className="w-full max-w-5xl">
+          <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-[#00FF9E] to-transparent mb-12"></div>
 
-              {/* Vertical Line */}
-              <div className="relative border-l border-zinc-800 ml-6 space-y-12">
-                {dayBlock.events.map((event, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="relative pl-12 group"
-                    onMouseEnter={() => playHoverSound()}
-                  >
-                    {/* Timeline Node */}
-                    <div className="absolute -left-[5px] top-2 w-[10px] h-[10px] bg-black border border-[#00F0FF] group-hover:bg-[#00F0FF] group-hover:shadow-[0_0_10px_#00F0FF] transition-all" />
-
-                    {/* Event Card */}
-                    <div
-                      className="relative p-6 bg-zinc-950/50 border border-white/5 hover:border-[#00F0FF]/40 transition-all duration-500 backdrop-blur-md overflow-hidden"
-                      style={{ clipPath: 'polygon(0 0, 95% 0, 100% 20%, 100% 100%, 5% 100%, 0 80%)' }}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-3">
-                            <Activity size={14} className="text-[#FF003C] animate-pulse" />
-                            <span className="text-[#FF003C] font-mono text-[10px] font-bold tracking-[0.2em] uppercase">
-                              // {event.type}
-                            </span>
-                          </div>
-                          <h3 className="text-2xl font-black text-white font-mono tracking-tighter uppercase group-hover:text-[#00F0FF] transition-colors">
-                            {event.title}
-                          </h3>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row gap-6 text-xs font-mono">
-                          <div className="flex items-center gap-3 bg-white/5 px-4 py-2 border border-white/5">
-                            <Clock size={16} className="text-[#00F0FF]" />
-                            <span className="text-zinc-300">{event.time}</span>
-                          </div>
-                          <div className="flex items-center gap-3 bg-white/5 px-4 py-2 border border-white/5">
-                            <MapPin size={16} className="text-[#FF003C]" />
-                            <span className="text-zinc-300">{event.venue}</span>
-                          </div>
-                        </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              {activeDay?.events.map((event, i) => (
+                <div
+                  key={i}
+                  className="relative group p-6 md:p-8 bg-zinc-950/70 border-l-4 border-zinc-800 hover:border-[#00F0FF] transition-all duration-300 backdrop-blur-md overflow-hidden"
+                  onMouseEnter={() => playHoverSound()}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <Activity
+                          size={14}
+                          className="text-[#00FF9E] animate-pulse"
+                        />
+                        <span className="text-[#00FF9E] font-mono text-[10px] font-bold tracking-[0.2em] uppercase">
+                          // {event.type}
+                        </span>
                       </div>
                       <h3 className="text-xl md:text-3xl font-black text-white font-['Orbitron'] tracking-wide uppercase group-hover:text-[#00F0FF] transition-colors">
                         {event.title}
