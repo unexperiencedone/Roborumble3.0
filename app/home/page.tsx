@@ -648,7 +648,7 @@ export default function Home() {
                     src={sponsor.image}
                     alt={sponsor.name}
                     fill
-                    className="object-contain p-4 filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                    className="object-contain p-4 transition-all duration-300"
                   />
                 </button>
               ))}
@@ -667,7 +667,7 @@ export default function Home() {
                     src={sponsor.image}
                     alt={sponsor.name}
                     fill
-                    className="object-contain p-4 filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                    className="object-contain p-4 transition-all duration-300"
                   />
                 </button>
               ))}

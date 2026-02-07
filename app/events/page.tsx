@@ -4,8 +4,21 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-
-import { Trophy, Users, Info, Shield, Zap, Cpu, Bot, Gamepad2, Mic, Rocket, Magnet, Download } from "lucide-react";
+import MatrixBackground from "../components/MatrixBackground";
+import {
+  Trophy,
+  Users,
+  Info,
+  Shield,
+  Zap,
+  Cpu,
+  Bot,
+  Gamepad2,
+  Mic,
+  Rocket,
+  Magnet,
+  Download,
+} from "lucide-react";
 import { BiFootball } from "react-icons/bi";
 import { SlotText } from "../components/SlotText";
 import Footer from "../components/Footer";
@@ -21,13 +34,23 @@ interface EventData {
   desc: string;
   teamSize: string;
   prize: string;
-  rules: string[];
+  cost: number;
+  rules: string[]; // General rules or summary
+  specifications?: string[]; // Bot/Project specs
+  gameplay?: string[]; // Gameplay mechanics
+  judging?: string[]; // Judging criteria
   video?: string; // Optional: Path to background video
   image?: string; // Optional: Path to background image
 }
 
 // --- Internal Component: Animated Backgrounds ---
-const CardBackground = ({ category, image }: { category: string; image?: string }) => {
+const CardBackground = ({
+  category,
+  image,
+}: {
+  category: string;
+  image?: string;
+}) => {
   // Priority: Image Background
   if (image) {
     return (
@@ -44,7 +67,7 @@ const CardBackground = ({ category, image }: { category: string; image?: string 
   }
 
   // Robotics: Scrolling Grid
-  if (category === 'Robotics') {
+  if (category === "Robotics") {
     return (
       <div className="absolute inset-0 z-0 opacity-20">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#00F0FF_1px,transparent_1px),linear-gradient(to_bottom,#00F0FF_1px,transparent_1px)] bg-[size:40px_40px] animate-grid-scroll"></div>
@@ -53,7 +76,7 @@ const CardBackground = ({ category, image }: { category: string; image?: string 
     );
   }
   // Gaming: Glitch/Noise
-  if (category === 'Gaming') {
+  if (category === "Gaming") {
     return (
       <div className="absolute inset-0 z-0 opacity-20 overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 animate-noise"></div>
@@ -64,7 +87,7 @@ const CardBackground = ({ category, image }: { category: string; image?: string 
     );
   }
   // Aerial: Sky/Flow
-  if (category === 'Aerial') {
+  if (category === "Aerial") {
     return (
       <div className="absolute inset-0 z-0 opacity-20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#00F0FF]/10 to-transparent"></div>
@@ -74,7 +97,7 @@ const CardBackground = ({ category, image }: { category: string; image?: string 
     );
   }
   // Data/Innovation: Particles/Nodes
-  if (category === 'Innovation' || category === 'Seminar') {
+  if (category === "Innovation" || category === "Seminar") {
     return (
       <div className="absolute inset-0 z-0 opacity-30">
         <div className="absolute inset-0 bg-[radial-gradient(#FFD700_1px,transparent_1px)] bg-[size:20px_20px] opacity-30"></div>
@@ -83,14 +106,14 @@ const CardBackground = ({ category, image }: { category: string; image?: string 
     );
   }
   // Defence: Radar/Hazard
-  if (category === 'Defence' || category === 'Exhibition') {
+  if (category === "Defence" || category === "Exhibition") {
     return (
       <div className="absolute inset-0 z-0 opacity-20">
         <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#FF003C_10px,#FF003C_11px)] opacity-10"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)]"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] border-t-2 border-[#FF003C]/50 rounded-full animate-radar-spin mask-image-radar"></div>
       </div>
-    )
+    );
   }
 
   // Default
@@ -98,12 +121,24 @@ const CardBackground = ({ category, image }: { category: string; image?: string 
 };
 
 // --- Internal Component: EventCard ---
-const EventCard = ({ event, index, registeredEvents, refreshEvents }: { event: EventData; index: number; registeredEvents: string[]; refreshEvents: () => void }) => {
+const EventCard = ({
+  event,
+  index,
+  registeredEvents,
+  refreshEvents,
+}: {
+  event: EventData;
+  index: number;
+  registeredEvents: string[];
+  refreshEvents: () => void;
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [activeTab, setActiveTab] = useState<'about' | 'rules' | 'register'>('about');
+  const [activeTab, setActiveTab] = useState<"about" | "rules" | "register">(
+    "about",
+  );
   const router = useRouter();
 
   const isRegistered = registeredEvents.includes(event.id);
@@ -133,7 +168,12 @@ const EventCard = ({ event, index, registeredEvents, refreshEvents }: { event: E
   };
 
   const handleOptOut = async () => {
-    if (!confirm("CONFIRM_ABORT: Are you sure you want to withdraw from this mission?")) return;
+    if (
+      !confirm(
+        "CONFIRM_ABORT: Are you sure you want to withdraw from this mission?",
+      )
+    )
+      return;
     setIsRegistering(true);
     try {
       const res = await fetch("/api/events/cancel", {
@@ -155,11 +195,11 @@ const EventCard = ({ event, index, registeredEvents, refreshEvents }: { event: E
   };
 
   // Preload audio
-  const playOpenSound = useAudio('/audio.wav', 0.1);
-  const playCloseSound = useAudio('audio.wav', 0.1);
+  const playOpenSound = useAudio("/audio.wav", 0.1);
+  const playCloseSound = useAudio("audio.wav", 0.1);
 
   const handleOpen = () => {
-    setActiveTab('about');
+    setActiveTab("about");
     setIsHovered(true);
     setIsLoading(true);
     playOpenSound();
@@ -180,17 +220,26 @@ const EventCard = ({ event, index, registeredEvents, refreshEvents }: { event: E
   const Icon = event.icon;
 
   return (
-    <div className="relative group cursor-crosshair h-full" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onClick={handleOpen}>
+    <div
+      className="relative group cursor-crosshair h-full"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={handleOpen}
+    >
       {/* Main Preview Card */}
       <div
         className="relative p-8 border-l-4 border-t border-[#00F0FF]/30 transition-all duration-500 overflow-hidden h-full flex flex-col justify-between bg-black/80 backdrop-blur-md"
-        style={{ clipPath: 'polygon(0 0, 92% 0, 100% 8%, 100% 100%, 8% 100%, 0 92%)' }}
+        style={{
+          clipPath: "polygon(0 0, 92% 0, 100% 8%, 100% 100%, 8% 100%, 0 92%)",
+        }}
       >
         {/* Animated Background Layer */}
         <CardBackground category={event.category} image={event.image} />
 
         {/* Hover Overlay */}
-        <div className={`absolute inset-0 bg-[#00F0FF]/10 z-0 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+        <div
+          className={`absolute inset-0 bg-[#00F0FF]/10 z-0 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}
+        />
 
         {/* Content Layer (z-10 to stay above bg) */}
         <div className="relative z-10 flex flex-col h-full">
@@ -212,171 +261,263 @@ const EventCard = ({ event, index, registeredEvents, refreshEvents }: { event: E
           </p>
 
           <div className="flex justify-between items-center pt-4 border-t border-white/10 mt-auto">
-            <span className="text-[#00F0FF] font-mono text-xs font-bold drop-shadow-md">{event.prize}</span>
-            <span className="text-white font-mono text-[9px] opacity-60 group-hover:opacity-100 transition-opacity underline">VIEW_SPECS</span>
+            <span className="text-[#00F0FF] font-mono text-xs font-bold drop-shadow-md">
+              {event.prize}
+            </span>
+            <span className="text-white font-mono text-[9px] opacity-60 group-hover:opacity-100 transition-opacity underline">
+              VIEW_SPECS
+            </span>
           </div>
         </div>
 
         {/* Grid Scan Effect (Overlay) */}
-        {isHovered && <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00F0FF]/20 to-transparent h-[20%] w-full animate-scan pointer-events-none z-20" />}
+        {isHovered && (
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00F0FF]/20 to-transparent h-[20%] w-full animate-scan pointer-events-none z-20" />
+        )}
       </div>
 
       {/* FULL SCREEN MISSION BRIEFING DIALOG */}
       {(isLoading || showDetails) && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 md:p-4 lg:p-12 pointer-events-none">
+        <div className="fixed inset-x-0 bottom-0 top-[96px] z-[9999] flex items-start justify-center px-4 py-2 pointer-events-auto">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" />
 
           <div
-            className="relative w-full max-w-sm md:max-w-3xl lg:max-w-5xl bg-[#050505] border border-[#FF003C] p-1 shadow-[0_0_80px_rgba(255,0,60,0.4)] pointer-events-auto overflow-hidden animate-glitch-entry"
+            className="relative w-full max-w-sm md:max-w-4xl lg:max-w-6xl bg-[#050505] border border-[#E661FF] shadow-[0_0_80px_rgba(230,97,255,0.4)] pointer-events-auto flex flex-col h-[calc(100vh-120px)] animate-glitch-entry"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Status Bar */}
-            <div className="bg-[#FF003C] text-black px-3 md:px-6 py-2 flex justify-between items-center font-mono text-[9px] md:text-[11px] font-black uppercase tracking-widest">
+            <div className="bg-[#E661FF] text-black px-3 md:px-6 py-1 flex justify-between items-center font-mono text-[9px] md:text-[11px] font-black uppercase tracking-widest flex-shrink-0">
               <div className="flex gap-2 md:gap-4">
-                <span className="animate-pulse">● MISSION_INTEL: {event.id.toUpperCase()}</span>
+                <span className="animate-pulse">
+                  ● MISSION_INTEL: {event.id.toUpperCase()}
+                </span>
               </div>
               {/* Desktop Close Button */}
-              <button onClick={handleClose} className="hidden md:block hover:bg-black hover:text-[#FF003C] px-2 md:px-4 py-1 transition-all border border-black font-bold text-[8px] md:text-[11px]">
+              <button
+                onClick={handleClose}
+                className="hidden md:block hover:bg-black hover:text-[#E661FF] px-2 py-1 transition-all border border-black font-bold text-[10px]"
+              >
                 [ CLOSE ]
               </button>
             </div>
 
-            <div className="p-4 md:p-8 lg:p-16 max-h-[60vh] md:max-h-[70vh] overflow-y-auto">
+            {/* Main Content Area */}
+            <div className="flex-grow overflow-hidden p-6 md:p-10">
               {isLoading ? (
-                <div className="h-[450px] flex flex-col items-center justify-center space-y-6">
-                  <div className="w-1 bg-[#FF003C] h-24 animate-pulse" />
-                  <p className="text-[#FF003C] font-mono text-xl animate-pulse tracking-[0.7em] font-black uppercase">Retrieving Ruleset...</p>
+                <div className="h-full flex flex-col items-center justify-center space-y-6">
+                  <div className="w-1 bg-[#E661FF] h-24 animate-pulse" />
+                  <p className="text-[#E661FF] font-mono text-xl animate-pulse tracking-[0.7em] font-black uppercase">
+                    Retrieving Data...
+                  </p>
                 </div>
               ) : (
-                <div className="flex flex-col md:flex-row gap-8 h-full">
-                  {/* Left Side: Navigation & Quick Stats */}
-                  <div className="w-full md:w-1/3 flex flex-col gap-6">
-                    <div className="aspect-video bg-zinc-950 border border-[#FF003C]/30 relative flex items-center justify-center p-6 overflow-hidden">
+                <div className="flex flex-col md:flex-row gap-10 h-full">
+                  {/* LEFT COLUMN: Image + Primary Action */}
+                  <div className="w-full md:w-1/3 flex flex-col gap-6 flex-shrink-0">
+                    {/* Image Box */}
+                    <div className="aspect-square bg-zinc-950 border border-[#E661FF]/30 relative flex items-center justify-center p-2 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(230,97,255,0.1)]">
                       {event.image ? (
-                        <Image src={event.image} alt={event.title} fill className="object-cover opacity-80" />
+                        <Image
+                          src={event.image}
+                          alt={event.title}
+                          fill
+                          className="object-cover rounded-lg opacity-90"
+                        />
                       ) : (
-                        <Icon size={60} className="text-[#FF003C] opacity-80 relative z-10" />
+                        <div className="w-full h-full flex items-center justify-center bg-[#E661FF]/5">
+                          <Icon
+                            size={80}
+                            className="text-[#E661FF] opacity-80"
+                          />
+                        </div>
                       )}
-                      <div className="absolute inset-0 border-[20px] border-transparent border-t-[#FF003C]/5 border-l-[#FF003C]/5 z-20" />
+
+                      {/* Corner Accents */}
+                      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#E661FF]" />
+                      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#E661FF]" />
+                      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#E661FF]" />
+                      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#E661FF]" />
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                      <button
-                        onClick={() => setActiveTab('about')}
-                        className={`px-4 py-3 text-left font-mono text-xs font-bold uppercase tracking-wider border-l-2 transition-all ${activeTab === 'about' ? 'border-[#00F0FF] bg-[#00F0FF]/10 text-[#00F0FF]' : 'border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-600'}`}
-                      >
-                          // About_Event
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('rules')}
-                        className={`px-4 py-3 text-left font-mono text-xs font-bold uppercase tracking-wider border-l-2 transition-all ${activeTab === 'rules' ? 'border-[#FF003C] bg-[#FF003C]/10 text-[#FF003C]' : 'border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-600'}`}
-                      >
-                          // Rules_&_Regs
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('register')}
-                        className={`px-4 py-3 text-left font-mono text-xs font-bold uppercase tracking-wider border-l-2 transition-all ${activeTab === 'register' ? 'border-[#E661FF] bg-[#E661FF]/10 text-[#E661FF]' : 'border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-600'}`}
-                      >
-                          // Register_Combat
-                      </button>
+                    {/* Registration Status / Action */}
+                    <div className="text-center space-y-3">
+                      {isRegistered ? (
+                        <div className="p-3 bg-green-900/20 border border-green-500/50 rounded text-green-400 font-mono text-xs font-bold uppercase tracking-wider">
+                          Status: Deployed
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-zinc-900/50 border border-zinc-700/50 rounded text-zinc-500 font-mono text-xs font-bold uppercase tracking-wider">
+                          Status: Awaiting Registration
+                        </div>
+                      )}
+
+                      {/* Primary Action Button */}
+                      {isRegistered ? (
+                        <button
+                          onClick={handleOptOut}
+                          disabled={isRegistering}
+                          className="w-full py-3 bg-red-600/10 border border-red-500 text-red-500 font-mono font-bold uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all text-xs"
+                        >
+                          {isRegistering ? "PROCESSING..." : "ABORT_MISSION"}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleRegister}
+                          disabled={isRegistering}
+                          className="w-full py-3 bg-[#E661FF] text-black font-mono font-black uppercase tracking-widest hover:bg-white hover:shadow-[0_0_20px_rgba(230,97,255,0.5)] transition-all text-xs border border-[#E661FF]"
+                        >
+                          {isRegistering ? "INITIALIZING..." : "REGISTER_NOW"}
+                        </button>
+                      )}
                     </div>
                   </div>
 
-                  {/* Right Side: Dynamic Content */}
-                  <div className="w-full md:w-2/3 bg-white/5 border border-white/10 p-6 md:p-8 min-h-[300px] relative overflow-y-auto">
-                    {/* About Tab */}
-                    {activeTab === 'about' && (
-                      <div className="space-y-6 animate-glitch-entry">
-                        <h4 className="text-3xl font-black text-white font-mono uppercase tracking-tighter loading-none">
-                          {event.title}
-                        </h4>
-                        <div className="h-1 w-20 bg-[#00F0FF]" />
-                        <p className="text-zinc-400 font-mono text-sm leading-relaxed">
-                          {event.desc}
-                        </p>
-                        <div className="grid grid-cols-2 gap-4 mt-4">
-                          <div className="p-3 border border-[#00F0FF]/20 bg-[#00F0FF]/5">
-                            <p className="text-zinc-500 text-[10px] uppercase mb-1">Squad Size</p>
-                            <p className="text-[#00F0FF] font-bold font-mono text-sm">{event.teamSize}</p>
-                          </div>
-                          <div className="p-3 border border-[#00F0FF]/20 bg-[#00F0FF]/5">
-                            <p className="text-zinc-500 text-[10px] uppercase mb-1">Bounty</p>
-                            <p className="text-[#00F0FF] font-bold font-mono text-sm">{event.prize}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                  {/* RIGHT COLUMN: Title + Content Box */}
+                  <div className="w-full md:w-2/3 flex flex-col h-full min-h-0">
+                    {/* Header */}
+                    <div className="mb-6 text-center md:text-left">
+                      <h2 className="text-4xl md:text-5xl font-black font-mono uppercase tracking-tighter text-white mb-2 leading-none">
+                        {event.title}
+                      </h2>
+                      <p className="text-[#00F0FF] font-mono text-sm tracking-[0.2em] font-bold">
+                        // {event.category} DIVISION
+                      </p>
+                    </div>
 
-                    {/* Rules Tab */}
-                    {activeTab === 'rules' && (
-                      <div className="space-y-6 animate-glitch-entry">
-                        <h4 className="text-2xl font-black text-[#FF003C] font-mono uppercase tracking-tight flex items-center gap-3">
-                          <Shield size={24} /> Engagement_Protocol
-                        </h4>
-                        <div className="space-y-3 h-full">
-                          {event.rules.map((rule, i) => (
-                            <div key={i} className="flex gap-4 p-3 bg-black/40 border-l border-[#FF003C]/30 hover:bg-[#FF003C]/5 transition-colors">
-                              <span className="text-[#FF003C] font-mono font-bold text-xs">0{i + 1}.</span>
-                              <p className="text-zinc-300 font-mono text-xs leading-relaxed">{rule}</p>
+                    {/* Styled Content Box */}
+                    <div className="flex-grow relative border border-[#E661FF]/30 bg-hex-mesh p-6 md:p-8 rounded-lg min-h-0 flex flex-col">
+                      {/* Decorative Brackets/Lines resembling the reference */}
+                      <div className="absolute -top-[1px] -left-[1px] w-8 h-8 border-t-2 border-l-2 border-[#E661FF]" />
+                      <div className="absolute -top-[1px] -right-[1px] w-8 h-8 border-t-2 border-r-2 border-[#E661FF]" />
+                      <div className="absolute -bottom-[1px] -left-[1px] w-8 h-8 border-b-2 border-l-2 border-[#E661FF]" />
+                      <div className="absolute -bottom-[1px] -right-[1px] w-8 h-8 border-b-2 border-r-2 border-[#E661FF]" />
+
+                      {/* Tab Content */}
+                      <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar">
+                        {activeTab === "about" && (
+                          <div className="space-y-6 animate-glitch-entry">
+                            <p className="text-zinc-300 font-mono text-sm leading-relaxed whitespace-pre-line">
+                              {event.desc}
+                            </p>
+                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+                              <div>
+                                <span className="text-[#E661FF] text-[10px] font-bold uppercase tracking-wider block mb-1">
+                                  Squad Size
+                                </span>
+                                <span className="text-white font-mono text-lg">
+                                  {event.teamSize}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[#E661FF] text-[10px] font-bold uppercase tracking-wider block mb-1">
+                                  Bounty
+                                </span>
+                                <span className="text-white font-mono text-lg">
+                                  {event.prize}
+                                </span>
+                              </div>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Register Tab */}
-                    {activeTab === 'register' && (
-                      <div className="flex flex-col items-center justify-center h-full text-center space-y-6 animate-glitch-entry py-8">
-                        <Rocket size={48} className="text-[#E661FF] animate-bounce" />
-                        <div>
-                          <h4 className="text-2xl font-black text-white font-mono uppercase mb-2">
-                            Ready for Deployment?
-                          </h4>
-                          <p className="text-zinc-400 font-mono text-xs max-w-xs mx-auto">
-                            Initialize your squad registration sequence. Slots are filling up fast.
-                          </p>
-                        </div>
-                        {isRegistered ? (
-                          <div className="w-full flex flex-col items-center gap-4">
-                            <button
-                              className="w-full max-w-xs py-4 bg-green-600/20 border border-green-500 text-green-500 font-black font-mono tracking-widest transition-colors uppercase text-sm flex items-center justify-center gap-2 cursor-default"
-                              style={{ clipPath: 'polygon(0 0, 95% 0, 100% 30%, 100% 100%, 5% 100%, 0 70%)' }}>
-                              <Shield size={16} /> ALREADY_REGISTERED
-                            </button>
                           </div>
-                        ) : (
-                          <Link href={`/events/register?eventId=${event.id}`}>
-                            <button
-                              className="w-full max-w-xs py-4 bg-[#E661FF] text-black font-black font-mono tracking-widest hover:bg-white transition-colors uppercase text-sm flex items-center justify-center gap-2"
-                              style={{ clipPath: 'polygon(0 0, 95% 0, 100% 30%, 100% 100%, 5% 100%, 0 70%)' }}>
-                              <Zap size={16} /> REGISTER_NOW
-                            </button>
-                          </Link>
                         )}
 
-                        {/* Brochure Link Removed: File not found */}
-                        {/* 
-                        <a href="/brochure.pdf" download className="w-full max-w-xs opacity-50 cursor-not-allowed">
-                          <button disabled className="w-full py-4 border border-white/20 text-white font-mono tracking-widest uppercase text-sm flex items-center justify-center gap-2">
-                            <Download size={16} /> BROCHURE_OFFLINE
-                          </button>
-                        </a> 
-                        */}
+                        {activeTab === "rules" && (
+                          <div className="space-y-8 animate-glitch-entry">
+                            {/* General/Main Rules */}
+                            <div className="space-y-4">
+                              <h5 className="text-[#FF003C] font-mono font-bold text-xs uppercase tracking-widest border-b border-[#FF003C]/30 pb-2">
+                                // Engagement_Protocol
+                              </h5>
+                              <ul className="space-y-3">
+                                {event.rules.map((rule, i) => (
+                                  <li
+                                    key={i}
+                                    className="flex gap-3 text-xs text-zinc-300 font-mono leading-relaxed bg-black/40 p-2 border-l-2 border-[#FF003C]/20 hover:border-[#FF003C] transition-colors"
+                                  >
+                                    <span className="text-[#FF003C] font-bold shrink-0">
+                                      0{i + 1}.
+                                    </span>
+                                    <span>{rule}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {/* Specifications Section */}
+                            {event.specifications && (
+                              <div className="space-y-4">
+                                <h5 className="text-[#00F0FF] font-mono font-bold text-xs uppercase tracking-widest border-b border-[#00F0FF]/30 pb-2">
+                                  // Tech_Specs
+                                </h5>
+                                <ul className="grid gap-2">
+                                  {event.specifications.map((spec, i) => (
+                                    <li
+                                      key={i}
+                                      className="flex gap-2 text-xs text-zinc-400 font-mono items-start"
+                                    >
+                                      <span className="text-[#00F0FF] mt-1">
+                                        ►
+                                      </span>
+                                      <span>{spec}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Gameplay Section */}
+                            {event.gameplay && (
+                              <div className="space-y-4">
+                                <h5 className="text-[#E661FF] font-mono font-bold text-xs uppercase tracking-widest border-b border-[#E661FF]/30 pb-2">
+                                  // Mission_Parameters
+                                </h5>
+                                <ul className="grid gap-2">
+                                  {event.gameplay.map((gp, i) => (
+                                    <li
+                                      key={i}
+                                      className="flex gap-2 text-xs text-zinc-400 font-mono items-start"
+                                    >
+                                      <span className="text-[#E661FF] mt-1">
+                                        ITEM_
+                                      </span>
+                                      <span>{gp}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               )}
+            </div>
 
-              {/* Mobile Close Button at Bottom */}
-              <div className="md:hidden border-t border-[#FF003C]/30 p-4">
-                <button
-                  onClick={handleClose}
-                  className="w-full bg-[#FF003C] text-black py-3 font-black font-mono text-xs uppercase tracking-widest hover:bg-[#FF003C]/80 transition-all"
-                >
-                  [ CLOSE ]
-                </button>
-              </div>
+            {/* Bottom Navigation Tabs */}
+            <div className="flex-shrink-0 border-t border-white/10 bg-black/50 p-4 flex justify-center gap-2 md:gap-4 flex-wrap">
+              <button
+                onClick={() => setActiveTab("about")}
+                className={`px-6 py-2 border font-mono text-xs font-bold uppercase tracking-wider transition-all skew-x-[-10deg] ${activeTab === "about" ? "bg-[#E661FF] border-[#E661FF] text-black shadow-[0_0_15px_rgba(230,97,255,0.4)]" : "border-white/20 text-zinc-400 hover:border-white hover:text-white"}`}
+              >
+                <span className="skew-x-[10deg] inline-block">About</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("rules")}
+                className={`px-6 py-2 border font-mono text-xs font-bold uppercase tracking-wider transition-all skew-x-[-10deg] ${activeTab === "rules" ? "bg-[#E661FF] border-[#E661FF] text-black shadow-[0_0_15px_rgba(230,97,255,0.4)]" : "border-white/20 text-zinc-400 hover:border-white hover:text-white"}`}
+              >
+                <span className="skew-x-[10deg] inline-block">Rules</span>
+              </button>
+            </div>
+
+            {/* Mobile Close Button (Bottom fixed) */}
+            <div className="md:hidden border-t border-[#E661FF]/30 p-0">
+              <button
+                onClick={handleClose}
+                className="w-full bg-[#E661FF] text-black py-4 font-black font-mono text-xs uppercase tracking-widest hover:bg-[#E661FF]/80 transition-all"
+              >
+                [ CLOSE MODULE ]
+              </button>
             </div>
           </div>
         </div>
@@ -405,137 +546,344 @@ export default function EventsPage() {
     fetchUserData();
   }, []);
 
-
   return (
-    <main className="min-h-screen bg-transparent text-white relative overflow-hidden">
-
+    <main className="min-h-screen bg-black text-white relative overflow-hidden">
+      <MatrixBackground color="#003B00" text="" />
 
       <div className="relative z-10 pt-40 pb-32 container mx-auto px-4 md:px-8">
         {/* Page Header */}
         <div className="mb-20 text-center">
           <div className="flex items-center justify-center gap-2 md:gap-4 mb-4">
             <div className="h-[2px] w-12 md:w-20 bg-[#00F0FF]" />
-            <span className="text-[#00F0FF] font-mono text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.4em] uppercase">SYSTEM_ARENA_INITIALIZED</span>
+            <span className="text-[#00F0FF] font-mono text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.4em] uppercase">
+              SYSTEM_ARENA_INITIALIZED
+            </span>
           </div>
           <h1 className="text-6xl md:text-9xl font-black font-mono tracking-tighter uppercase leading-[0.8] mb-8">
             {/* Multi-layered Glitch Effect on EVENT */}
             <div className="relative inline-block glitch-container">
               {/* Red glitch layer */}
-              <span className="absolute top-0 left-0 text-[#FF003C] mix-blend-screen opacity-70 glitch-layer-red" style={{ transform: 'translate(-0.02em, 0.02em)' }}>
+              <span
+                className="absolute top-0 left-0 text-[#FF003C] mix-blend-screen opacity-70 glitch-layer-red"
+                style={{ transform: "translate(-0.02em, 0.02em)" }}
+              >
                 EVENT
               </span>
               {/* Cyan glitch layer */}
-              <span className="absolute top-0 left-0 text-[#00F0FF] mix-blend-screen opacity-60 glitch-layer-cyan" style={{ transform: 'translate(0.03em, -0.02em)' }}>
+              <span
+                className="absolute top-0 left-0 text-[#00F0FF] mix-blend-screen opacity-60 glitch-layer-cyan"
+                style={{ transform: "translate(0.03em, -0.02em)" }}
+              >
                 EVENT
               </span>
               {/* Main white layer */}
-              <span className="relative text-white">
-                EVENT
-              </span>
+              <span className="relative text-white">EVENT</span>
             </div>
             <br />
             <div className="flex justify-center w-full">
-              <SlotText text="ARENA_" className="text-6xl md:text-9xl" />
+              <SlotText
+                text="ARENA_"
+                className="text-6xl md:text-9xl text-[#00F0FF]"
+              />
             </div>
           </h1>
           <p className="text-zinc-500 text-lg font-mono max-w-2xl border-l-2 border-[#00F0FF] pl-6 py-2 bg-gradient-to-r from-[#00F0FF]/5 to-transparent">
-            Choose your battlefield. Engage in high-precision robotics, aerial maneuvers, or digital warfare.
+            Choose your battlefield. Engage in high-precision robotics, aerial
+            maneuvers, or digital warfare.
           </p>
         </div>
 
-        {/* Dynamic Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {events.map((event: any, i: number) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              index={i}
-              registeredEvents={registeredEvents}
-              refreshEvents={fetchUserData}
-            />
-          ))}
+        {/* Competitive Section */}
+        <div className="mb-16">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-2 h-8 bg-[#FF003C]" />
+            <h2 className="text-2xl md:text-4xl font-black font-mono uppercase tracking-widest text-white">
+              // COMPETITIVE_PARADIGMS
+            </h2>
+            <div className="h-[1px] flex-grow bg-gradient-to-r from-[#FF003C]/50 to-transparent" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {events
+              .filter((e: any) =>
+                ["Robotics", "Aerial", "Gaming"].includes(e.category),
+              )
+              .map((event: any, i: number) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  index={i}
+                  registeredEvents={registeredEvents}
+                  refreshEvents={fetchUserData}
+                />
+              ))}
+          </div>
+        </div>
+
+        {/* Expos Section */}
+        <div className="mb-16">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-2 h-8 bg-[#E661FF]" />
+            <h2 className="text-2xl md:text-4xl font-black font-mono uppercase tracking-widest text-white">
+              // EXPOS_PARADIGMS
+            </h2>
+            <div className="h-[1px] flex-grow bg-gradient-to-r from-[#E661FF]/50 to-transparent" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {events
+              .filter(
+                (e: any) =>
+                  !["Robotics", "Aerial", "Gaming"].includes(e.category),
+              )
+              .map((event: any, i: number) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  index={i}
+                  registeredEvents={registeredEvents}
+                  refreshEvents={fetchUserData}
+                />
+              ))}
+          </div>
         </div>
       </div>
 
       <Footer />
 
       <style jsx global>{`
-        @keyframes scan { 0% { top: -20%; } 100% { top: 120%; } }
-        .animate-scan { position: absolute; animation: scan 2s linear infinite; }
-        @keyframes glitch-entry {
-          0% { opacity: 0; transform: scale(0.97) skewX(-4deg); filter: brightness(2); }
-          50% { opacity: 1; transform: scale(1.03) skewX(2deg); filter: brightness(1.2); }
-          100% { transform: scale(1) skewX(0); filter: brightness(1); }
+        /* HEX MESH BACKGROUND */
+        .bg-hex-mesh {
+          background-color: #080508;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23E661FF' fill-opacity='0.07' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
-        .animate-glitch-entry { animation: glitch-entry 0.4s ease-out forwards; }
-        
+
+        /* CUSTOM SCROLLBARS */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #e661ff;
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #d440ef;
+        }
+
+        @keyframes scan {
+          0% {
+            top: -20%;
+          }
+          100% {
+            top: 120%;
+          }
+        }
+        .animate-scan {
+          position: absolute;
+          animation: scan 2s linear infinite;
+        }
+        @keyframes glitch-entry {
+          0% {
+            opacity: 0;
+            transform: scale(0.97) skewX(-4deg);
+            filter: brightness(2);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.03) skewX(2deg);
+            filter: brightness(1.2);
+          }
+          100% {
+            transform: scale(1) skewX(0);
+            filter: brightness(1);
+          }
+        }
+        .animate-glitch-entry {
+          animation: glitch-entry 0.4s ease-out forwards;
+        }
+
         /* Normal Glitch Effect */
         .glitch-container {
           animation: glitch-skew 3s infinite;
         }
         @keyframes glitch-skew {
-          0%, 100% { transform: skew(0deg); }
-          20% { transform: skew(0deg); }
-          21% { transform: skew(-0.6deg); }
-          22% { transform: skew(0deg); }
-          60% { transform: skew(0deg); }
-          61% { transform: skew(0.6deg); }
-          62% { transform: skew(0deg); }
+          0%,
+          100% {
+            transform: skew(0deg);
+          }
+          20% {
+            transform: skew(0deg);
+          }
+          21% {
+            transform: skew(-0.6deg);
+          }
+          22% {
+            transform: skew(0deg);
+          }
+          60% {
+            transform: skew(0deg);
+          }
+          61% {
+            transform: skew(0.6deg);
+          }
+          62% {
+            transform: skew(0deg);
+          }
         }
-        
+
         .glitch-layer-red {
           animation: glitch-clip-red 2.5s infinite;
         }
         .glitch-layer-cyan {
           animation: glitch-clip-cyan 2s infinite;
         }
-        
+
         @keyframes glitch-clip-red {
-          0%, 100% { clip-path: inset(0 0 0 0); }
-          10% { clip-path: inset(0 0 0 0); }
-          11% { clip-path: inset(22% 0 58% 0); }
-          12% { clip-path: inset(0 0 0 0); }
-          50% { clip-path: inset(0 0 0 0); }
-          51% { clip-path: inset(42% 0 28% 0); }
-          52% { clip-path: inset(0 0 0 0); }
+          0%,
+          100% {
+            clip-path: inset(0 0 0 0);
+          }
+          10% {
+            clip-path: inset(0 0 0 0);
+          }
+          11% {
+            clip-path: inset(22% 0 58% 0);
+          }
+          12% {
+            clip-path: inset(0 0 0 0);
+          }
+          50% {
+            clip-path: inset(0 0 0 0);
+          }
+          51% {
+            clip-path: inset(42% 0 28% 0);
+          }
+          52% {
+            clip-path: inset(0 0 0 0);
+          }
         }
-        
+
         @keyframes glitch-clip-cyan {
-          0%, 100% { clip-path: inset(0 0 0 0); }
-          15% { clip-path: inset(0 0 0 0); }
-          16% { clip-path: inset(32% 0 48% 0); }
-          17% { clip-path: inset(0 0 0 0); }
-          65% { clip-path: inset(0 0 0 0); }
-          66% { clip-path: inset(12% 0 68% 0); }
-          67% { clip-path: inset(0 0 0 0); }
+          0%,
+          100% {
+            clip-path: inset(0 0 0 0);
+          }
+          15% {
+            clip-path: inset(0 0 0 0);
+          }
+          16% {
+            clip-path: inset(32% 0 48% 0);
+          }
+          17% {
+            clip-path: inset(0 0 0 0);
+          }
+          65% {
+            clip-path: inset(0 0 0 0);
+          }
+          66% {
+            clip-path: inset(12% 0 68% 0);
+          }
+          67% {
+            clip-path: inset(0 0 0 0);
+          }
         }
 
         /* NEW ANIMATIONS FOR CARDS */
         @keyframes grid-scroll {
-            0% { background-position: 0 0; }
-            100% { background-position: 40px 40px; }
+          0% {
+            background-position: 0 0;
+          }
+          100% {
+            background-position: 40px 40px;
+          }
         }
-        .animate-grid-scroll { animation: grid-scroll 2s linear infinite; }
+        .animate-grid-scroll {
+          animation: grid-scroll 2s linear infinite;
+        }
 
         @keyframes wind-flow {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0.2; }
-            50% { opacity: 0.5; }
-            100% { transform: translateY(-20px) rotate(5deg); opacity: 0.2; }
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.2;
+          }
+          50% {
+            opacity: 0.5;
+          }
+          100% {
+            transform: translateY(-20px) rotate(5deg);
+            opacity: 0.2;
+          }
         }
-        .animate-wind-flow { animation: wind-flow 10s ease-in-out infinite alternate; }
+        .animate-wind-flow {
+          animation: wind-flow 10s ease-in-out infinite alternate;
+        }
 
         @keyframes radar-spin {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+          from {
+            transform: translate(-50%, -50%) rotate(0deg);
+          }
+          to {
+            transform: translate(-50%, -50%) rotate(360deg);
+          }
         }
-        .animate-radar-spin { animation: radar-spin 4s linear infinite; }
+        .animate-radar-spin {
+          animation: radar-spin 4s linear infinite;
+        }
 
-        @keyframes scan-fast { 0% { top: -10%; } 100% { top: 110%; } }
-        .animate-scan-fast { animation: scan-fast 1s linear infinite; }
-        .animate-scan-fast-reverse { animation: scan-fast 1.5s linear infinite reverse; }
+        @keyframes scan-fast {
+          0% {
+            top: -10%;
+          }
+          100% {
+            top: 110%;
+          }
+        }
+        .animate-scan-fast {
+          animation: scan-fast 1s linear infinite;
+        }
+        .animate-scan-fast-reverse {
+          animation: scan-fast 1.5s linear infinite reverse;
+        }
 
-        @keyframes noise { 0% { transform: translate(0,0); } 10% { transform: translate(-5%,-5%); } 20% { transform: translate(-10%,5%); } 30% { transform: translate(5%,-10%); } 40% { transform: translate(-5%,15%); } 50% { transform: translate(-10%,5%); } 60% { transform: translate(15%,0); } 70% { transform: translate(0,10%); } 80% { transform: translate(-15%,0); } 90% { transform: translate(10%,5%); } 100% { transform: translate(5%,0); } }
-        .animate-noise { animation: noise 2s steps(10) infinite; }
+        @keyframes noise {
+          0% {
+            transform: translate(0, 0);
+          }
+          10% {
+            transform: translate(-5%, -5%);
+          }
+          20% {
+            transform: translate(-10%, 5%);
+          }
+          30% {
+            transform: translate(5%, -10%);
+          }
+          40% {
+            transform: translate(-5%, 15%);
+          }
+          50% {
+            transform: translate(-10%, 5%);
+          }
+          60% {
+            transform: translate(15%, 0);
+          }
+          70% {
+            transform: translate(0, 10%);
+          }
+          80% {
+            transform: translate(-15%, 0);
+          }
+          90% {
+            transform: translate(10%, 5%);
+          }
+          100% {
+            transform: translate(5%, 0);
+          }
+        }
+        .animate-noise {
+          animation: noise 2s steps(10) infinite;
+        }
       `}</style>
     </main>
   );
