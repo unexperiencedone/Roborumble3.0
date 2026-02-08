@@ -151,3 +151,69 @@ export async function sendPaymentRejectedEmail(
         html,
     });
 }
+
+interface TeamMember {
+    name: string;
+    email: string;
+}
+
+export async function sendTeamPaymentVerifiedEmail(
+    members: TeamMember[],
+    eventTitle: string,
+    amount: number
+) {
+    const results = [];
+    
+    for (const member of members) {
+        const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; padding: 20px; }
+                .container { max-width: 600px; margin: 0 auto; background: #111; border: 1px solid #00F0FF33; border-radius: 16px; padding: 32px; }
+                .header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+                .logo { font-size: 24px; font-weight: 900; color: #00F0FF; font-family: monospace; }
+                .success { color: #22c55e; font-size: 18px; font-weight: bold; margin: 20px 0; }
+                .event { background: #000; padding: 16px; border-radius: 8px; margin: 16px 0; border: 1px solid #00F0FF33; }
+                .event-title { color: #00F0FF; font-size: 18px; font-weight: bold; margin: 0; }
+                .amount { font-size: 32px; font-weight: 900; color: #00F0FF; text-align: center; margin: 20px 0; }
+                .footer { text-align: center; color: #666; font-size: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #333; }
+                .cta { display: inline-block; background: #00F0FF; color: #000; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 16px 0; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <div class="logo">ROBO_RUMBLE</div>
+                </div>
+                <p>Hi ${member.name},</p>
+                <div class="success">✓ Your payment has been verified!</div>
+                <p>You are now registered for the following event:</p>
+                <div class="event">
+                    <p class="event-title">${eventTitle}</p>
+                </div>
+                <div class="amount">₹${amount} PAID</div>
+                <p>Your QR code is available in your dashboard. See you at the event!</p>
+                <p style="text-align: center;">
+                    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://roborumble.org'}/dashboard/registrations" class="cta">View Dashboard</a>
+                </p>
+                <div class="footer">
+                    <p>Robo Rumble 3.0 | Robotics Championship</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+
+        const result = await sendEmail({
+            to: member.email,
+            subject: "✅ Payment Verified - Robo Rumble Registration Confirmed!",
+            html,
+        });
+        
+        results.push(result);
+    }
+    
+    return results.every(r => r); // Return true if all emails sent successfully
+}

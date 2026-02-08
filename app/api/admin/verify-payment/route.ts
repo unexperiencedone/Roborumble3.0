@@ -6,6 +6,7 @@ import Team from "@/app/models/Team";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import AuthUser from "@/app/models/AuthUser";
+import { sendTeamPaymentVerifiedEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
     try {
@@ -50,6 +51,31 @@ export async function POST(req: Request) {
                     notes: notes || "Manually verified by admin",
                 },
             });
+
+            // Fetch registration with populated data for email
+            try {
+                const populatedReg = await Registration.findById(registrationId)
+                    .populate("selectedMembers", "firstName lastName email")
+                    .populate("eventId", "title fees");
+
+                if (populatedReg && populatedReg.selectedMembers && populatedReg.selectedMembers.length > 0) {
+                    const members = populatedReg.selectedMembers.map((member: any) => ({
+                        name: `${member.firstName || ""} ${member.lastName || ""}`.trim() || "Team Member",
+                        email: member.email,
+                    }));
+
+                    const eventTitle = (populatedReg.eventId as any)?.title || "Event";
+                    const amount = populatedReg.amountPaid || (populatedReg.eventId as any)?.fees || 0;
+
+                    // Send emails to all team members (don't await to avoid blocking)
+                    sendTeamPaymentVerifiedEmail(members, eventTitle, amount)
+                        .then(() => console.log(`Emails sent to ${members.length} members for registration ${registrationId}`))
+                        .catch(err => console.error("Email sending error:", err));
+                }
+            } catch (emailError) {
+                console.error("Error sending verification emails:", emailError);
+                // Don't fail the verification if email fails
+            }
 
             return NextResponse.json({ message: "Registration verified manually" });
         }
