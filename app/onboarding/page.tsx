@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -184,12 +186,17 @@ export default function OnboardingPage() {
             <div className="relative z-10 w-full max-w-lg">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                            <Zap className="w-4 h-4 text-white" />
+                    <Link href="/dashboard" className="flex items-center gap-2 group">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center overflow-hidden h-8 w-8 relative">
+                            <Image
+                                src="/skull-1.png"
+                                alt="Robo Rumble Logo"
+                                fill
+                                className="object-contain scale-150"
+                            />
                         </div>
-                        <span className="text-white font-bold">Robo Rumble</span>
-                    </div>
+                        <span className="text-lg font-bold text-white group-hover:text-[#00E5FF] tracking-tight leading-tight transition-all duration-300">Robo Rumble</span>
+                    </Link>
                     <SignOutButton>
                         <button className="flex items-center gap-1 px-3 py-1.5 text-gray-400 text-sm hover:text-white transition-colors">
                             <LogOut size={14} /> Logout

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { UserButton, SignOutButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
     Home,
     Users,
@@ -16,6 +17,7 @@ import {
     X,
     Zap,
     ChevronRight,
+    ArrowLeft,
 } from "lucide-react";
 import NotificationBell from "@/app/components/NotificationBell";
 
@@ -80,20 +82,38 @@ export default function DashboardLayout({
                 `}
             >
                 {/* Logo Section */}
-                <div className="p-5 border-b border-gray-800/50">
+                <Link href="/" className="group p-5 border-b border-gray-800/50 block hover:bg-white/5 transition-colors">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-cyan-500/20 rounded-xl">
-                            <Zap className="text-cyan-400" size={22} />
+                        <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-500/10 rounded-xl overflow-hidden">
+                            <Image
+                                src="/skull-1.png"
+                                alt="Robo Rumble Logo"
+                                width={32}
+                                height={32}
+                                className="object-contain"
+                            />
                         </div>
                         <div>
-                            <h1 className="text-lg font-bold text-white tracking-tight">
+                            <h1 className="text-lg font-bold text-white group-hover:text-[#00E5FF] tracking-tight leading-tight transition-all duration-300">
                                 Robo Rumble
                             </h1>
-                            <p className="text-xs text-cyan-400 font-medium tracking-widest uppercase">
+                            <p className="text-[10px] text-cyan-400 font-medium tracking-widest uppercase">
                                 Dashboard
                             </p>
                         </div>
                     </div>
+                </Link>
+
+                {/* Back to Home Link (Pinned Top) */}
+                <div className="px-3 py-2 border-b border-gray-800/50">
+                    <Link
+                        href="/"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-gray-800/50 hover:text-white transition-all duration-200"
+                    >
+                        <ArrowLeft size={18} />
+                        <span className="font-medium text-sm">Back to Home</span>
+                    </Link>
                 </div>
 
                 {/* Navigation */}
@@ -154,14 +174,6 @@ export default function DashboardLayout({
                         </button>
                     </SignOutButton>
 
-                    {/* Back to Home Link */}
-                    <Link
-                        href="/home"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-center gap-2 px-4 py-2 text-gray-500 hover:text-gray-300 text-xs transition-colors"
-                    >
-                        ← Back to Home
-                    </Link>
                 </div>
             </aside>
 
