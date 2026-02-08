@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Team from "@/app/models/Team";
 import Profile from "@/app/models/Profile";
+import Registration from "@/app/models/Registration";
 
 // GET - List teams or get user's team
 export async function GET(req: Request) {
@@ -34,10 +35,23 @@ export async function GET(req: Request) {
                 _id: { $in: profile.invitations },
             }).populate("leaderId", "username email").lean();
 
+            // Check if team has any paid or verified registrations
+            let hasPaidRegistration = false;
+            // Static import is done at top of file
+            if (team) {
+                const paidRegistration = await Registration.findOne({
+                    teamId: team._id,
+                    paymentStatus: { $in: ["paid", "manual_verified", "manual_verification_pending"] },
+                });
+                console.log(`Checking paid registration for team ${team._id}:`, paidRegistration);
+                hasPaidRegistration = !!paidRegistration;
+            }
+
             return NextResponse.json({
                 team,
                 invitations,
                 profileId: profile._id,
+                hasPaidRegistration,
             });
         }
 

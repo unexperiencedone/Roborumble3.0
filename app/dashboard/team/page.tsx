@@ -40,6 +40,7 @@ interface TeamData {
     leaderId: Member;
     members: Member[];
     isLocked: boolean;
+    hasPaidRegistration?: boolean;
 }
 
 interface Invitation {
@@ -525,8 +526,14 @@ export default function TeamPage() {
                                             <span>{team.members?.length || 0}/50 Members</span>
                                         </p>
                                     </div>
+                                    {isLeader && team.hasPaidRegistration && (
+                                        <div className="flex items-center gap-2 text-yellow-400 text-sm bg-yellow-400/10 px-3 py-1.5 rounded-lg border border-yellow-400/20">
+                                            <AlertCircle size={14} />
+                                            <span>Cannot disband paid team</span>
+                                        </div>
+                                    )}
 
-                                    {true && (
+                                    {(!isLeader || !team.hasPaidRegistration) && (
                                         <motion.button
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}

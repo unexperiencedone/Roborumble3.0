@@ -21,8 +21,7 @@ export async function GET(req: Request) {
 
         const eventsWithId = events.map((event: any) => ({
             ...event.toObject(),
-            eventId: event._id.toString(),
-            _id: undefined, // Optional: remove _id to clean up response
+            _id: event._id.toString(), // Expose _id as string just in case
         }));
 
         return NextResponse.json({ events: eventsWithId });

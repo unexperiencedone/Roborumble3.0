@@ -55,6 +55,21 @@ export async function POST(req: Request) {
         if (isLeader) {
             // Leader is leaving - disband the entire team
 
+            // Check if team has any paid or verified registrations
+            const paidRegistration = await import("@/app/models/Registration").then((mod) =>
+                mod.default.findOne({
+                    teamId: team._id,
+                    paymentStatus: { $in: ["paid", "manual_verified", "manual_verification_pending"] },
+                })
+            );
+
+            if (paidRegistration) {
+                return NextResponse.json(
+                    { message: "Cannot disband a team that has paid registrations. Please contact admin." },
+                    { status: 400 }
+                );
+            }
+
             // Get all member IDs
             const memberIds = team.members || [];
 

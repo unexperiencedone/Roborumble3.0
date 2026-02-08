@@ -35,18 +35,22 @@ export async function GET() {
                 { teamId: { $in: teamIds } },
                 { selectedMembers: profile._id }
             ]
-        }).select("eventId paymentStatus");
+        }).populate("eventId", "eventId"); // Populate only the custom eventId field
 
         const statusMap: Record<string, string> = {};
         const paidEvents: string[] = [];
         const registeredEvents: string[] = [];
 
         registrations.forEach((reg: any) => {
-            const eId = reg.eventId.toString();
-            statusMap[eId] = reg.paymentStatus;
-            registeredEvents.push(eId);
+            if (!reg.eventId) return; // Skip if event not found
+            
+            // reg.eventId is now the populated Event document
+            const customEventId = reg.eventId.eventId; 
+            
+            statusMap[customEventId] = reg.paymentStatus;
+            registeredEvents.push(customEventId);
             if (reg.paymentStatus === 'paid') {
-                paidEvents.push(eId);
+                paidEvents.push(customEventId);
             }
         });
 
