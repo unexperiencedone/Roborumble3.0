@@ -88,7 +88,7 @@ export default function NotificationBell({ className = "" }: NotificationBellPro
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2.5 rounded-xl bg-gray-800/50 border border-gray-700/50 hover:border-cyan-500/30 transition-all"
+                className="relative p-2.5 rounded-xl bg-gray-800/80 border border-gray-700/50 hover:bg-gray-700/80 backdrop-blur-sm transition-all"
             >
                 <Bell size={18} className="text-gray-400" />
 
