@@ -9,6 +9,7 @@ import Countdown from "../components/countdown";
 import Image from "next/image";
 import { sponsors, SponsorData } from "../data/sponsors";
 import { useAudio } from "../hooks/useAudio";
+import { SlotText } from "../components/SlotText";
 
 // --- Types ---
 interface TeamMember {
@@ -423,8 +424,8 @@ export default function Home() {
               </div>
               <span className="text-[6rem] md:text-[10rem] lg:text-[12rem] leading-none align-baseline text-[#00F0FF] font-mono animate-pulse">3.0</span>
             </div>
-            <div className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#00F0FF]">
-              RUMBLE
+            <div className="flex justify-center">
+              <SlotText text="RUMBLE" className="text-6xl md:text-8xl lg:text-9xl font-black font-mono tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#00F0FF]" />
             </div>
           </h1>
 
