@@ -518,21 +518,15 @@ export default function TeamPage() {
                                             )}
                                         </div>
                                         <p className="text-gray-400 mt-1 flex items-center gap-2">
-                                            {team.isLocked ? (
-                                                <span className="text-red-400 flex items-center gap-1">
-                                                    🔒 Team Locked (Payment Made)
-                                                </span>
-                                            ) : (
-                                                <span className="text-green-400 flex items-center gap-1">
-                                                    ✓ Open for Members
-                                                </span>
-                                            )}
+                                            <span className="text-green-400 flex items-center gap-1">
+                                                ✓ Open for Members
+                                            </span>
                                             <span className="text-gray-600">•</span>
                                             <span>{team.members?.length || 0}/50 Members</span>
                                         </p>
                                     </div>
 
-                                    {!team.isLocked && (
+                                    {true && (
                                         <motion.button
                                             whileHover={{ scale: 1.02 }}
                                             whileTap={{ scale: 0.98 }}
@@ -580,7 +574,7 @@ export default function TeamPage() {
                         </motion.div>
 
                         {/* Invite Members Section (Leader Only) */}
-                        {isLeader && !team.isLocked && (
+                        {isLeader && (
                             <motion.div
                                 variants={itemVariants}
                                 className="rounded-2xl border border-gray-700/50 bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-6"

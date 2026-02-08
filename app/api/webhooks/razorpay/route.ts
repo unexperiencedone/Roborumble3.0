@@ -90,9 +90,6 @@ export async function POST(req: Request) {
                 },
             });
 
-            // Lock the team
-            await Team.findByIdAndUpdate(registration.teamId, { isLocked: true });
-
             console.log(`Payment successful for registration: ${registration._id}`);
         }
 

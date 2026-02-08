@@ -321,14 +321,9 @@ export default function DashboardPage() {
                                                 Members
                                             </span>
                                             <span
-                                                className={`px-2 py-0.5 rounded-full text-xs font-medium ${team.isLocked
-                                                    ? "bg-red-500/20 text-red-400"
-                                                    : "bg-green-500/20 text-green-400"
-                                                    }`}
+                                                className={`px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400`}
                                             >
-                                                {team.isLocked
-                                                    ? "🔒 Locked"
-                                                    : "✓ Open"}
+                                                ✓ Open
                                             </span>
                                         </div>
                                     </div>
@@ -435,8 +430,8 @@ export default function DashboardPage() {
                                         text: "Create a team before registering for any event.",
                                     },
                                     {
-                                        icon: "🔒",
-                                        text: "Once you register and pay, your team will be locked (no new members).",
+                                        icon: "🔓",
+                                        text: "Teams remain open for new members even after registration.",
                                     },
                                     {
                                         icon: "✅",

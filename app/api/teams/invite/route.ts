@@ -39,13 +39,7 @@ export async function POST(req: Request) {
             );
         }
 
-        // Check if team is locked
-        if (team.isLocked) {
-            return NextResponse.json(
-                { message: "Team is locked. Cannot add new members after payment." },
-                { status: 400 }
-            );
-        }
+
 
         // Check team size limit
         if (team.members && team.members.length >= MAX_TEAM_SIZE) {

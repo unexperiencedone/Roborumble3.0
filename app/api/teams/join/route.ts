@@ -42,12 +42,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "Team not found" }, { status: 404 });
         }
 
-        if (team.isLocked) {
-            return NextResponse.json(
-                { message: "Team is locked and not accepting new members" },
-                { status: 400 }
-            );
-        }
+
 
         // Check if already requested
         if (team.joinRequests.includes(profile._id)) {

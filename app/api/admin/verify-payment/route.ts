@@ -51,9 +51,6 @@ export async function POST(req: Request) {
                 },
             });
 
-            // Lock the team associated with this registration
-            await Team.findByIdAndUpdate(registration.teamId, { isLocked: true });
-
             return NextResponse.json({ message: "Registration verified manually" });
         }
 
