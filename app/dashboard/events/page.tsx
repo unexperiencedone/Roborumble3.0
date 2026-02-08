@@ -524,6 +524,17 @@ export default function DashboardEventsPage() {
 
     setActiveEvent({ eventId, cost, teamId, selectedMembers });
 
+    // Check if already registered (initiated/pending/failed status)
+    const existingRegistration = getRegistrationStatus(eventId);
+    const isAlreadyInitiated = existingRegistration && 
+      ['initiated', 'pending', 'failed'].includes(existingRegistration.status);
+
+    // If already initiated and has cost, skip warning and go directly to payment
+    if (isAlreadyInitiated && cost > 0) {
+      setShowPayment(true);
+      return;
+    }
+
     if (cost > 0) {
       setShowWarning(true);
     } else {

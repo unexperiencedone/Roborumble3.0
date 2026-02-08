@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { ManualPaymentDialog } from "@/app/components/events/PaymentDialogs";
 
 interface RegistrationData {
   _id: string;
@@ -82,6 +83,9 @@ export default function RegistrationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedQr, setSelectedQr] = useState<RegistrationData | null>(null);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [activePaymentReg, setActivePaymentReg] =
+    useState<RegistrationData | null>(null);
 
   useEffect(() => {
     if (user?.id) {
@@ -112,61 +116,39 @@ export default function RegistrationsPage() {
   }
 
   async function handlePayNow(registration: RegistrationData) {
-    // Trigger payment flow
+    // Open manual payment dialog
+    setActivePaymentReg(registration);
+    setShowPaymentDialog(true);
+  }
+
+  async function handlePaymentSubmit(
+    transactionId: string,
+    screenshotUrl: string,
+  ) {
+    if (!activePaymentReg) return;
+
     try {
-      const orderRes = await fetch("/api/payments/create-order", {
+      const res = await fetch("/api/payments/manual-submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          clerkId: user?.id,
-          eventId: registration.eventId._id,
+          registrationId: activePaymentReg._id,
+          transactionId,
+          screenshotUrl,
         }),
       });
 
-      const orderData = await orderRes.json();
-
-      if (!orderRes.ok) {
-        alert(orderData.message || "Failed to create payment order");
-        return;
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Payment submission failed");
       }
 
-      const options = {
-        key: orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: orderData.amount,
-        currency: orderData.currency || "INR",
-        name: "Robo Rumble",
-        description: `Payment for ${registration.eventId.title}`,
-        order_id: orderData.orderId,
-        handler: async function (response: any) {
-          const verifyRes = await fetch("/api/payments/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ...response,
-              eventId: registration.eventId._id,
-            }),
-          });
-          if (verifyRes.ok) {
-            alert("Payment successful!");
-            fetchRegistrations();
-          } else {
-            alert("Payment verification failed");
-          }
-        },
-        prefill: {
-          name: user?.fullName || "",
-          email: user?.emailAddresses?.[0]?.emailAddress || "",
-        },
-        theme: {
-          color: "#00F0FF",
-        },
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (e) {
-      console.error(e);
-      alert("Error initiating payment");
+      setShowPaymentDialog(false);
+      setActivePaymentReg(null);
+      alert("Payment submitted successfully! Awaiting admin verification.");
+      await fetchRegistrations();
+    } catch (e: any) {
+      throw e; // Re-throw to let dialog handle error display
     }
   }
 
@@ -348,6 +330,18 @@ export default function RegistrationsPage() {
           </div>
         </div>
       )}
+
+      {/* Manual Payment Dialog */}
+      <ManualPaymentDialog
+        isOpen={showPaymentDialog}
+        onClose={() => {
+          setShowPaymentDialog(false);
+          setActivePaymentReg(null);
+        }}
+        eventId={activePaymentReg?.eventId?._id || ""}
+        amount={activePaymentReg?.eventId?.fees || 0}
+        onSubmit={handlePaymentSubmit}
+      />
     </div>
   );
 }
