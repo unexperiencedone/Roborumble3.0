@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { X, ShieldAlert, DollarSign, Upload, CheckCircle, Loader2, Copy } from "lucide-react";
 import { UploadButton } from "@/app/utils/uploadthing";
+import { QRCodeSVG } from "qrcode.react";
 
 interface NonRefundableDialogProps {
     isOpen: boolean;
@@ -112,17 +113,20 @@ export function ManualPaymentDialog({ isOpen, onClose, eventId, amount, onSubmit
                              <DollarSign size={24} /> PAYMENT_GATEWAY
                         </h3>
 
+                        {/* MAINTAINER NOTE: QR Code is dynamically generated using UPI payment link
+                            - UPI ID and Name are loaded from environment variables (NEXT_PUBLIC_UPI_ID, NEXT_PUBLIC_UPI_NAME)
+                            - Amount is passed from the event registration
+                            - Update .env.local with production UPI credentials before deployment
+                            - DO NOT hardcode UPI details in source code for security
+                        */}
                         <div className="bg-white p-4 rounded-lg shadow-xl mb-6 mx-auto max-w-[240px]">
-                            {/* QR Code Placeholder with actual QR or generated one */}
-                             <div className="aspect-square bg-gray-100 flex items-center justify-center relative overflow-hidden">
-                                {/* Replace with actual QR image path */}
-                                <Image 
-                                    src="/qr-code-placeholder.png" 
-                                    alt="Payment QR" 
-                                    width={200} 
-                                    height={200}
-                                    className="object-contain"
-                                    unoptimized // If using external URL
+                            <div className="aspect-square bg-gray-100 flex items-center justify-center relative overflow-hidden">
+                                {/* Dynamic UPI QR Code */}
+                                <QRCodeSVG
+                                    value={`upi://pay?pa=${process.env.NEXT_PUBLIC_UPI_ID || 'roborumble@upi'}&pn=${encodeURIComponent(process.env.NEXT_PUBLIC_UPI_NAME || 'Robo Rumble 3.0')}&am=${amount}&cu=INR&tn=${encodeURIComponent('RoboRumble Event Registration')}`}
+                                    size={200}
+                                    level="H"
+                                    includeMargin={false}
                                 />
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
                                     <div className="w-full h-[2px] bg-red-500 animate-[scan_2s_ease-in-out_infinite]" />
@@ -139,8 +143,8 @@ export function ManualPaymentDialog({ isOpen, onClose, eventId, amount, onSubmit
                             <div className="space-y-1">
                                 <span className="text-zinc-500 text-xs uppercase">UPI ID</span>
                                 <div className="flex items-center justify-between bg-black/50 p-2 rounded border border-white/10">
-                                    <span className="text-[#00F0FF]">roborumble@upi</span>
-                                    <button onClick={() => copyToClipboard("roborumble@upi")} className="text-zinc-400 hover:text-white">
+                                    <span className="text-[#00F0FF]">{process.env.NEXT_PUBLIC_UPI_ID || 'roborumble@upi'}</span>
+                                    <button onClick={() => copyToClipboard(process.env.NEXT_PUBLIC_UPI_ID || 'roborumble@upi')} className="text-zinc-400 hover:text-white">
                                         <Copy size={14} />
                                     </button>
                                 </div>
