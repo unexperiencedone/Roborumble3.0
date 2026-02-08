@@ -18,10 +18,8 @@ import {
     ChevronRight,
     ArrowLeft,
     Calendar,
-    ShoppingCart,
 } from "lucide-react";
 import NotificationBell from "@/app/components/NotificationBell";
-import CartSidebar from "@/app/components/CartSidebar";
 
 const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home, color: "cyan" },
@@ -37,8 +35,6 @@ export default function DashboardLayout({
 }) {
     const pathname = usePathname();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [cartOpen, setCartOpen] = useState(false);
-    const [cartCount, setCartCount] = useState(0);
 
     const colorClasses = {
         cyan: "from-cyan-500/20 to-cyan-500/5 border-cyan-500/30 text-cyan-400",
@@ -193,20 +189,7 @@ export default function DashboardLayout({
                     {/* Notifications Bell */}
                     <NotificationBell />
 
-                    {/* Cart Button */}
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setCartOpen(true)}
-                        className="relative p-2.5 bg-gray-800/80 hover:bg-gray-700/80 rounded-xl border border-gray-700/50 backdrop-blur-sm transition-all group"
-                    >
-                        <ShoppingCart size={18} className="text-gray-400 group-hover:text-cyan-400 transition-colors" />
-                        {cartCount > 0 && (
-                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-cyan-500 text-black text-[10px] font-black rounded-full flex items-center justify-center">
-                                {cartCount > 9 ? "9+" : cartCount}
-                            </span>
-                        )}
-                    </motion.button>
+
                 </div>
 
                 {/* Page Content */}
@@ -215,12 +198,7 @@ export default function DashboardLayout({
                 </div>
             </main>
 
-            {/* Cart Sidebar */}
-            <CartSidebar
-                isOpen={cartOpen}
-                onClose={() => setCartOpen(false)}
-                onCartUpdate={(count) => setCartCount(count)}
-            />
+
         </div>
     );
 }
