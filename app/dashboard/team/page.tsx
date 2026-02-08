@@ -170,6 +170,8 @@ export default function TeamPage() {
     const [searchLoading, setSearchLoading] = useState(false);
     const [teamSearchQuery, setTeamSearchQuery] = useState("");
     const [teamSearchResults, setTeamSearchResults] = useState<TeamData[]>([]);
+    const [availableTeams, setAvailableTeams] = useState<TeamData[]>([]);
+    const [availableTeamsLoading, setAvailableTeamsLoading] = useState(false);
 
     // Toast message
     const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
@@ -194,6 +196,11 @@ export default function TeamPage() {
             setTeam(data.team || null);
             setInvitations(data.invitations || []);
             setProfileId(data.profileId || "");
+
+            // If user has no team, fetch available teams
+            if (!data.team) {
+                fetchAvailableTeams();
+            }
 
             // If user is a leader, fetch pending invites and join requests
             if (data.team && data.team.leaderId?._id === data.profileId) {
@@ -229,6 +236,22 @@ export default function TeamPage() {
             setLoading(false);
         }
     }, [user?.id]);
+
+    // Fetch available teams for users without a team
+    async function fetchAvailableTeams() {
+        setAvailableTeamsLoading(true);
+        try {
+            const res = await fetch("/api/teams?available=true");
+            if (res.ok) {
+                const data = await res.json();
+                setAvailableTeams(data.teams || []);
+            }
+        } catch (e) {
+            console.error("Error fetching available teams:", e);
+        } finally {
+            setAvailableTeamsLoading(false);
+        }
+    }
 
     // Debounced user search
     useEffect(() => {
@@ -847,6 +870,76 @@ export default function TeamPage() {
                                     Create Team
                                 </motion.button>
                             </div>
+                        </motion.div>
+
+                        {/* Available Teams - Auto-loaded */}
+                        <motion.div
+                            variants={itemVariants}
+                            className="rounded-2xl border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-500/5 p-6"
+                        >
+                            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <Users size={24} className="text-green-400" />
+                                Available Teams
+                                <span className="ml-auto text-sm font-normal text-gray-400">
+                                    {availableTeams.length} teams open
+                                </span>
+                            </h2>
+                            <p className="text-gray-400 text-sm mb-4">
+                                These teams are looking for new members. Send a join request to get started!
+                            </p>
+
+                            {availableTeamsLoading ? (
+                                <div className="flex items-center justify-center py-8">
+                                    <Loader2 className="animate-spin text-green-400" size={24} />
+                                </div>
+                            ) : availableTeams.length > 0 ? (
+                                <div className="space-y-3">
+                                    {availableTeams.map((t) => (
+                                        <motion.div
+                                            key={t._id}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-green-500/30 transition-all group"
+                                        >
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold">
+                                                    {t.name?.[0]?.toUpperCase() || "T"}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-white font-medium truncate">{t.name}</p>
+                                                    <p className="text-gray-400 text-sm flex items-center gap-2">
+                                                        <Crown size={12} className="text-yellow-400" />
+                                                        {t.leaderId?.username || "Unknown"}
+                                                        <span className="text-gray-600">•</span>
+                                                        <Users size={12} />
+                                                        {t.members?.length || 0} members
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => requestJoin(t._id)}
+                                                disabled={actionLoading === `join-${t._id}`}
+                                                className="px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors flex items-center gap-2 shrink-0"
+                                            >
+                                                {actionLoading === `join-${t._id}` ? (
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                ) : (
+                                                    <Send size={16} />
+                                                )}
+                                                Request to Join
+                                            </motion.button>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                                    <Users size={32} className="mb-2 opacity-50" />
+                                    <p className="text-sm">No teams available right now</p>
+                                    <p className="text-xs text-gray-600 mt-1">Create your own team or search for a specific one below</p>
+                                </div>
+                            )}
                         </motion.div>
 
                         {/* Find a Team */}
