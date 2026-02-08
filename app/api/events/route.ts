@@ -19,7 +19,13 @@ export async function GET(req: Request) {
             .select("-createdBy -__v")
             .sort({ category: 1, title: 1 });
 
-        return NextResponse.json({ events });
+        const eventsWithId = events.map((event: any) => ({
+            ...event.toObject(),
+            eventId: event._id.toString(),
+            _id: undefined, // Optional: remove _id to clean up response
+        }));
+
+        return NextResponse.json({ events: eventsWithId });
     } catch (error) {
         console.error("Fetch events error:", error);
         return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });

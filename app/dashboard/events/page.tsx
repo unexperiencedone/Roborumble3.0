@@ -51,7 +51,15 @@ interface EventData {
 
 interface RegistrationStatus {
   eventId: string;
-  status: "registered" | "paid" | "pending" | "manual_verified" | "manual_verification_pending";
+  status:
+    | "registered"
+    | "paid"
+    | "pending"
+    | "manual_verified"
+    | "manual_verification_pending"
+    | "initiated"
+    | "failed"
+    | "refunded";
 }
 
 // --- Icons Mapping ---
@@ -261,35 +269,57 @@ const HorizontalEventCard = ({
               </p>
             </div>
 
-            {isPaid ? (
-              <button
-                disabled
-                className="w-full px-4 py-2 bg-green-500/10 border border-green-500/50 text-green-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default"
-              >
-                <CheckCircle size={14} /> Registered
-              </button>
-            ) : ["manual_verified", "manual_verification_pending"].includes(registration?.status || "") ? (
-              <button
-                disabled
-                className="w-full px-4 py-2 bg-yellow-500/10 border border-yellow-500/50 text-yellow-500 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default"
-              >
-                <Clock size={14} /> Verification Pending
-              </button>
-            ) : isRegistered && event.fees > 0 ? (
-              <button
-                onClick={() => onRegister(event.eventId, event.fees)}
-                className="w-full px-4 py-2 bg-yellow-500/10 border border-yellow-500/50 text-yellow-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 hover:bg-yellow-500/20 transition-all"
-              >
-                <Clock size={14} /> Pay Now
-              </button>
-            ) : (
-              <button
-                onClick={handleRegisterClick}
-                className="w-full px-4 py-2 bg-white text-black font-black font-mono text-xs rounded-lg uppercase hover:bg-[#00F0FF] transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]"
-              >
-                Register <ArrowRight size={14} />
-              </button>
-            )}
+            {(() => {
+              const status = registration?.status;
+
+              if (status === "paid" || status === "manual_verified") {
+                return (
+                  <button
+                    disabled
+                    className="w-full px-4 py-2 bg-green-500/10 border border-green-500/50 text-green-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default"
+                  >
+                    <CheckCircle size={14} /> Registered
+                  </button>
+                );
+              }
+
+              if (status === "manual_verification_pending") {
+                return (
+                  <button
+                    disabled
+                    className="w-full px-4 py-2 bg-orange-500/10 border border-orange-500/50 text-orange-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default"
+                  >
+                    <Clock size={14} /> Verification Pending
+                  </button>
+                );
+              }
+
+              if (
+                status === "initiated" ||
+                status === "pending" ||
+                status === "failed"
+              ) {
+                return (
+                  <button
+                    onClick={() => onRegister(event.eventId, event.fees)}
+                    className="w-full px-4 py-2 bg-yellow-500/10 border border-yellow-500/50 text-yellow-500 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 hover:bg-yellow-500/20 transition-all"
+                  >
+                    <Clock size={14} />{" "}
+                    {status === "failed" ? "Retry Payment" : "Pay Now"}
+                  </button>
+                );
+              }
+
+              // Default state: Not registered
+              return (
+                <button
+                  onClick={handleRegisterClick}
+                  className="w-full px-4 py-2 bg-white text-black font-black font-mono text-xs rounded-lg uppercase hover:bg-[#00F0FF] transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]"
+                >
+                  Register <ArrowRight size={14} />
+                </button>
+              );
+            })()}
           </div>
         </div>
       </div>
@@ -443,6 +473,7 @@ export default function DashboardEventsPage() {
       const res = await fetch("/api/profile/status");
       if (res.ok) {
         const data = await res.json();
+        console.log("DEBUG: fetchRegistrationStatus response:", data); // DEBUG LOG
         const statusMap = data.statusMap || {};
         const userEvents = data.registeredEvents || [];
 
@@ -452,10 +483,11 @@ export default function DashboardEventsPage() {
             status: statusMap[eventId] || "registered", // Fallback to registered
           }),
         );
+        console.log("DEBUG: Mapped statuses:", statuses); // DEBUG LOG
         setRegisteredEvents(statuses);
       }
     } catch (e) {
-      console.error(e);
+      console.error("Error fetching status:", e);
     } finally {
       // Slight delay for smooth transition
       setTimeout(() => setLoading(false), 500);
@@ -601,9 +633,9 @@ export default function DashboardEventsPage() {
       setShowPayment(false);
       setActiveEvent(null);
       await fetchRegistrationStatus();
-      
+
       // Scroll to top to show message
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
       throw new Error(err.message || "Failed to submit payment details");
     }
