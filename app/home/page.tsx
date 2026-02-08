@@ -422,7 +422,7 @@ export default function Home() {
                 </span>
                 <span className="relative text-white">ROBO</span>
               </div>
-              <span className="text-[6rem] md:text-[10rem] lg:text-[12rem] leading-none align-baseline text-[#00F0FF] font-mono animate-pulse">3.0</span>
+              <span className="text-5xl sm:text-[6rem] md:text-[10rem] lg:text-[12rem] leading-none align-baseline text-[#00F0FF] font-mono animate-pulse">3.0</span>
             </div>
             <div className="flex justify-center">
               <SlotText text="RUMBLE" className="text-6xl md:text-8xl lg:text-9xl font-black font-mono tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#00F0FF]" />
