@@ -28,6 +28,8 @@ export interface IRegistration extends Document {
     createdAt: Date;
     updatedAt: Date;
     selectedMembers: mongoose.Types.ObjectId[]; // The squad for this event
+    checkedIn: boolean;
+    checkedInAt?: Date;
 }
 
 const RegistrationSchema = new Schema<IRegistration>(
@@ -84,6 +86,10 @@ const RegistrationSchema = new Schema<IRegistration>(
             verifiedAt: Date,
             notes: String,
         },
+
+        // Event Check-in
+        checkedIn: { type: Boolean, default: false },
+        checkedInAt: Date,
     },
     { timestamps: true }
 );

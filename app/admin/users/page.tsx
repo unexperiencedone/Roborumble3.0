@@ -63,8 +63,8 @@ export default function AdminUsersPage() {
     };
 
     const filteredUsers = users.filter(u => 
-        u.name.toLowerCase().includes(filter.toLowerCase()) || 
-        u.email.toLowerCase().includes(filter.toLowerCase())
+        (u.name || "").toLowerCase().includes(filter.toLowerCase()) || 
+        (u.email || "").toLowerCase().includes(filter.toLowerCase())
     );
 
     return (
@@ -84,7 +84,7 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="overflow-x-auto border border-zinc-800">
-                <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-sm whitespace-nowrap">
                     <thead className="bg-zinc-900 text-zinc-500 uppercase text-xs">
                         <tr>
                             <th className="p-4">User</th>

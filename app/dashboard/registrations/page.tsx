@@ -10,7 +10,10 @@ import {
   Loader2,
   CreditCard,
   Users,
+  QrCode,
+  X,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface RegistrationData {
   _id: string;
@@ -78,6 +81,7 @@ export default function RegistrationsPage() {
   const [registrations, setRegistrations] = useState<RegistrationData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedQr, setSelectedQr] = useState<RegistrationData | null>(null);
 
   useEffect(() => {
     if (user?.id) {
@@ -271,11 +275,70 @@ export default function RegistrationsPage() {
                         <CreditCard size={14} /> Pay Now
                       </button>
                     )}
+                    {isPaid && (
+                      <button
+                        onClick={() => setSelectedQr(reg)}
+                        className="px-4 py-2 bg-[#E661FF] text-black font-black font-mono text-xs rounded-lg uppercase hover:bg-white transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(230,97,255,0.3)]"
+                      >
+                        <QrCode size={14} /> View QR
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* QR Code Modal */}
+      {selectedQr && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111] border border-[#00F0FF]/30 p-8 rounded-2xl max-w-sm w-full relative animate-in fade-in zoom-in duration-200">
+            <button
+              onClick={() => setSelectedQr(null)}
+              className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+            <div className="text-center">
+              <h3 className="text-2xl font-black text-white font-mono mb-2 uppercase">
+                Team Gate Pass
+              </h3>
+              <p className="text-[#00F0FF] font-mono text-sm mb-6">
+                Scan this at the event entrance
+              </p>
+
+              <div className="bg-white p-4 rounded-xl inline-block mb-6">
+                <QRCodeSVG
+                  value={JSON.stringify({ registrationId: selectedQr._id })}
+                  size={200}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+
+              <div className="text-left bg-zinc-900/50 p-4 rounded-xl border border-white/5">
+                <p className="text-zinc-500 text-xs font-mono uppercase mb-1">
+                  Event
+                </p>
+                <p className="text-white font-bold font-mono mb-3">
+                  {selectedQr.eventId?.title}
+                </p>
+
+                <p className="text-zinc-500 text-xs font-mono uppercase mb-1">
+                  Team Name
+                </p>
+                <p className="text-white font-bold font-mono">
+                  {selectedQr.teamId?.name || "Individual"}
+                </p>
+              </div>
+
+              <p className="text-zinc-600 text-[10px] font-mono mt-4 uppercase">
+                ID: {selectedQr._id}
+              </p>
+            </div>
+          </div>
         </div>
       )}
     </div>

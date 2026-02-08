@@ -74,9 +74,9 @@ export default function AdminDashboard() {
   };
 
   const filteredUsers = users.filter(u => 
-      u.name.toLowerCase().includes(filter.toLowerCase()) || 
-      u.email.toLowerCase().includes(filter.toLowerCase()) ||
-      u.college.toLowerCase().includes(filter.toLowerCase())
+      (u.name || "").toLowerCase().includes(filter.toLowerCase()) || 
+      (u.email || "").toLowerCase().includes(filter.toLowerCase()) ||
+      (u.college || "").toLowerCase().includes(filter.toLowerCase())
   );
 
   if (authLoading || (loading && users.length === 0)) {
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
 
           {/* Table */}
           <div className="overflow-x-auto border border-zinc-800 bg-black/80">
-              <table className="w-full text-left text-xs uppercase">
+              <table className="w-full text-left text-xs uppercase whitespace-nowrap">
                   <thead>
                       <tr className="bg-zinc-900 text-zinc-500 border-b border-zinc-800">
                           <th className="p-4">ID</th>
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
                   <tbody>
                       {filteredUsers.map((u) => (
                           <tr key={u.id} className="border-b border-zinc-800 hover:bg-zinc-900/50 transition-colors">
-                              <td className="p-4 font-mono text-zinc-600">#{u.id.toString().padStart(4, '0')}</td>
+                              <td className="p-4 font-mono text-zinc-600">#{(u.id || "N/A").toString().padStart(4, '0')}</td>
                               <td className="p-4">
                                   <div className="font-bold text-white">{u.name}</div>
                                   <div className="text-zinc-500 lowercase">{u.email}</div>

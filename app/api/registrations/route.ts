@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     if (clerkId) {
         try {
             await connectDB();
-            const Profile = (await import("@/app/models/AuthUser")).default;
+            const Profile = (await import("@/app/models/Profile")).default;
             const profile = await Profile.findOne({ clerkId });
 
             if (!profile) {

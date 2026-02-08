@@ -37,7 +37,13 @@ export async function GET() {
             )
             .sort({ createdAt: -1 });
 
-        return NextResponse.json({ users: allUsers }, { status: 200 });
+        const safeUsers = allUsers.map((u) => ({
+            ...u.toObject(),
+            id: u._id.toString(),
+            _id: u._id.toString()
+        }));
+
+        return NextResponse.json({ users: safeUsers }, { status: 200 });
     } catch (error) {
         console.error("Admin Users Fetch Error:", error);
         return NextResponse.json({ error: "INTERNAL_SERVER_ERROR" }, { status: 500 });
