@@ -6,9 +6,9 @@ import Image from "next/image";
 import {
   Terminal,
   Shield,
-  Github,
   Instagram,
   Twitter,
+  Linkedin,
   Mail,
   Lock,
 } from "lucide-react";
@@ -97,16 +97,18 @@ const Footer = () => {
                 <Instagram size={18} />
               </Link>
               <Link
-                href="#"
+                href="https://x.com/roborumble1"
+                target="_blank"
                 className="p-2 border border-white/10 text-zinc-400 hover:text-white hover:border-[#FF003C] transition-all"
               >
                 <Twitter size={18} />
               </Link>
               <Link
-                href="#"
+                href="https://www.linkedin.com/company/robo-rumble/"
+                target="_blank"
                 className="p-2 border border-white/10 text-zinc-400 hover:text-white hover:border-[#E661FF] transition-all"
               >
-                <Github size={18} />
+                <Linkedin size={18} />
               </Link>
             </div>
             <div className="flex items-center gap-2 text-zinc-400 font-mono text-xs underline mb-4">
