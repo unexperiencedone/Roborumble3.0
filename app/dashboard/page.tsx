@@ -366,7 +366,7 @@ export default function DashboardPage() {
                                 icon={CheckCircle2}
                                 title="Onboarding"
                                 linkText="Edit Profile"
-                                href="/onboarding"
+                                href="/dashboard/profile"
                                 color="from-green-500/20 to-emerald-500/20"
                                 accentColor="bg-green-500/20 text-green-400"
                             >

@@ -1,15 +1,18 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { X, Menu, User } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { usePathname } from 'next/navigation';
+import { X, Menu, User, LayoutDashboard, UserCircle, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { useUser, useClerk } from '@clerk/nextjs';
+import { usePathname, useRouter } from 'next/navigation';
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { user, loading } = useAuth();
-
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
+  const router = useRouter();
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
 
@@ -25,6 +28,18 @@ const Navbar = () => {
     { label: 'SPONSORS', href: '/sponsors' },
   ];
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -32,6 +47,23 @@ const Navbar = () => {
   const closeSidebar = () => {
     setIsSidebarOpen(false);
   };
+
+  const handleLogout = async () => {
+    setIsProfileDropdownOpen(false);
+    closeSidebar();
+    await signOut();
+    router.push('/home');
+  };
+
+  const profileMenuItems = [
+    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Profile', href: '/dashboard/profile', icon: UserCircle },
+    { label: 'Settings', href: '/dashboard/settings', icon: Settings },
+  ];
+
+  // Get user display name
+  const userName = user?.firstName || user?.username || user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] || 'User';
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress || '';
 
   return (
     <div className="fixed top-0 left-0 w-full z-50">
@@ -63,16 +95,60 @@ const Navbar = () => {
 
           {/* Desktop Register Button - Hidden on mobile/tablet */}
           <div className="hidden lg:flex items-center gap-4">
-            {loading ? (
+            {!isLoaded ? (
               // Loading Placeholder to prevent layout shift or flicker
               <div className="w-[100px] h-[40px] animate-pulse bg-white/5 border border-white/10" />
             ) : user ? (
-              <Link href="/account">
-                <button className="bg-[#00E5FF]/10 border border-[#00E5FF] text-[#00E5FF] font-bold px-6 py-2 flex items-center gap-2 hover:bg-[#00E5FF]/20 transition-all font-mono tracking-widest text-sm shadow-[0_0_10px_rgba(0,229,255,0.2)]">
-                  <User size={16} />
-                  {user.name.toUpperCase()}
+              // Profile dropdown for logged-in users
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="bg-[#00E5FF]/10 border border-[#00E5FF] text-[#00E5FF] font-bold px-4 py-2 flex items-center gap-2 hover:bg-[#00E5FF]/20 transition-all font-mono tracking-widest text-sm shadow-[0_0_10px_rgba(0,229,255,0.2)]"
+                >
+                  <div className="w-7 h-7 rounded-full bg-[#00E5FF]/20 border border-[#00E5FF]/50 flex items-center justify-center">
+                    <User size={14} />
+                  </div>
+                  <span className="max-w-[100px] truncate">{userName.toUpperCase()}</span>
+                  <ChevronDown size={14} className={`transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
-              </Link>
+
+                {/* Dropdown Menu */}
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-[#0B0D10] border border-[#00E5FF]/30 rounded-lg shadow-[0_0_20px_rgba(0,229,255,0.2)] overflow-hidden z-50">
+                    {/* User info header */}
+                    <div className="px-4 py-3 border-b border-white/10">
+                      <p className="text-white font-bold text-sm truncate">{userName}</p>
+                      <p className="text-gray-400 text-xs truncate">{userEmail}</p>
+                    </div>
+
+                    {/* Menu items */}
+                    <div className="py-1">
+                      {profileMenuItems.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-[#00E5FF] hover:bg-white/5 transition-colors"
+                        >
+                          <item.icon size={16} />
+                          <span className="text-sm font-medium">{item.label}</span>
+                        </Link>
+                      ))}
+                    </div>
+
+                    {/* Logout button */}
+                    <div className="border-t border-white/10 py-1">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                      >
+                        <LogOut size={16} />
+                        <span className="text-sm font-medium">Logout</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link href="/login">
@@ -167,16 +243,41 @@ const Navbar = () => {
         </div>
 
         {/* Sidebar CTA Buttons */}
-        <div className="sticky bottom-0 left-0 right-0 p-6 border-t border-[rgba(255,255,255,0.08)] bg-[#0B0D10] space-y-4">
-          {loading ? (
+        <div className="sticky bottom-0 left-0 right-0 p-6 border-t border-[rgba(255,255,255,0.08)] bg-[#0B0D10] space-y-3">
+          {!isLoaded ? (
             <div className="w-full h-[56px] animate-pulse bg-white/5 border border-[rgba(255,255,255,0.08)] rounded" />
           ) : user ? (
-            <Link href="/account" onClick={closeSidebar}>
-               <button className="w-full bg-[#00E5FF]/10 border border-[#00E5FF] text-[#00E5FF] font-bold py-4 px-6 flex items-center justify-center gap-2 hover:bg-[#00E5FF]/20 transition-all font-mono tracking-widest text-sm shadow-[0_0_10px_rgba(0,229,255,0.2)]">
-                  <User size={16} />
-                  {(user.name || "User").toUpperCase()}
-               </button>
-            </Link>
+            <div className="space-y-2">
+              {/* User info */}
+              <div className="flex items-center gap-3 px-2 py-2 mb-3 border-b border-white/10 pb-4">
+                <div className="w-10 h-10 rounded-full bg-[#00E5FF]/20 border border-[#00E5FF]/50 flex items-center justify-center">
+                  <User size={18} className="text-[#00E5FF]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-bold text-sm truncate">{userName}</p>
+                  <p className="text-gray-400 text-xs truncate">{userEmail}</p>
+                </div>
+              </div>
+
+              {/* Menu items */}
+              {profileMenuItems.map((item) => (
+                <Link key={item.href} href={item.href} onClick={closeSidebar}>
+                  <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-[#00E5FF] hover:bg-white/5 rounded-lg transition-colors">
+                    <item.icon size={18} />
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </button>
+                </Link>
+              ))}
+
+              {/* Logout button */}
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors border-t border-white/10 mt-2 pt-4"
+              >
+                <LogOut size={18} />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </div>
           ) : (
             <div className="flex flex-col gap-3">
               <Link href="/login" onClick={closeSidebar}>

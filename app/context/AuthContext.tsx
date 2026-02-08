@@ -18,6 +18,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   refetchUser: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,8 +72,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fetchUser();
   }, []);
 
+  const logout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (error) {
+      console.error("Logout Error:", error);
+    } finally {
+      setUser(null);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("robo_user");
+      }
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, refetchUser: fetchUser }}>
+    <AuthContext.Provider value={{ user, loading, refetchUser: fetchUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -28,6 +28,8 @@ interface EventData {
     currentRegistrations: number;
     maxRegistrations?: number;
     date?: string; // Adding date field for UI
+    minTeamSize?: number;
+    maxTeamSize?: number;
 }
 
 interface RegistrationStatus {
@@ -88,9 +90,10 @@ const HorizontalEventCard = ({
     const Icon = getEventIcon(event.category, event.eventId);
     const { day, month, fullDate, time } = formatDate(event.date);
 
-    // Parse team size to get max allowed members
+    // Parse team size to get min/max allowed members
     const isTeamEvent = !event.teamSize.toLowerCase().includes("individual") && !event.teamSize.toLowerCase().includes("open");
-    const maxTeamSize = parseInt(event.teamSize.match(/(\d+)/g)?.pop() || "1");
+    const minTeamSize = event.minTeamSize || 1;
+    const maxTeamSize = event.maxTeamSize || parseInt(event.teamSize.match(/(\d+)/g)?.pop() || "1");
 
     // Initialize with team leader if available
     useEffect(() => {
@@ -125,8 +128,12 @@ const HorizontalEventCard = ({
     };
 
     const handleConfirmRoster = () => {
-        if (selectedMembers.length === 0) {
-            alert("Please select at least one member");
+        if (selectedMembers.length < minTeamSize) {
+            alert(`Please select at least ${minTeamSize} member${minTeamSize > 1 ? 's' : ''}`);
+            return;
+        }
+        if (selectedMembers.length > maxTeamSize) {
+            alert(`Maximum ${maxTeamSize} members allowed`);
             return;
         }
         onAddToCart(event.eventId, teamData?.team?._id, selectedMembers);
@@ -251,7 +258,7 @@ const HorizontalEventCard = ({
                     <div className="bg-[#111] border border-[#00F0FF] rounded-xl max-w-md w-full p-6 shadow-[0_0_50px_rgba(0,240,255,0.3)]">
                         <h3 className="text-xl font-black text-white font-mono mb-2 uppercase">Select Squad Members</h3>
                         <p className="text-zinc-400 text-xs font-mono mb-4">
-                            Choose {maxTeamSize} members for {event.title}
+                            Choose {minTeamSize === maxTeamSize ? minTeamSize : `${minTeamSize}-${maxTeamSize}`} members for {event.title}
                         </p>
 
                         <div className="mb-4 p-3 bg-zinc-900/50 border border-zinc-800 rounded">
@@ -262,8 +269,8 @@ const HorizontalEventCard = ({
                                 </div>
                                 <div className="text-right">
                                     <div className="text-[10px] text-zinc-500 font-mono uppercase">Selected</div>
-                                    <div className={`font-bold font-mono ${selectedMembers.length > maxTeamSize ? 'text-red-500' : 'text-[#00F0FF]'}`}>
-                                        {selectedMembers.length} / {maxTeamSize}
+                                    <div className={`font-bold font-mono ${selectedMembers.length < minTeamSize || selectedMembers.length > maxTeamSize ? 'text-red-500' : 'text-[#00F0FF]'}`}>
+                                        {selectedMembers.length} / {minTeamSize === maxTeamSize ? minTeamSize : `${minTeamSize}-${maxTeamSize}`}
                                     </div>
                                 </div>
                             </div>
@@ -310,7 +317,7 @@ const HorizontalEventCard = ({
                             </button>
                             <button
                                 onClick={handleConfirmRoster}
-                                disabled={selectedMembers.length === 0 || selectedMembers.length > maxTeamSize}
+                                disabled={selectedMembers.length < minTeamSize || selectedMembers.length > maxTeamSize}
                                 className="flex-[2] py-2 bg-[#00F0FF] text-black font-mono font-black uppercase text-xs hover:bg-white transition-all rounded disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Confirm Squad

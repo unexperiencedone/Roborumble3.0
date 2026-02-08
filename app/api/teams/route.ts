@@ -54,8 +54,23 @@ export async function GET(req: Request) {
             return NextResponse.json({ teams });
         }
 
+        // If available=true, fetch available teams (not locked)
+        const available = searchParams.get("available");
+        if (available === "true") {
+            const teams = await Team.find({
+                isLocked: false,
+            })
+                .populate("leaderId", "username email avatarUrl")
+                .populate("members", "_id")
+                .sort({ createdAt: -1 })
+                .limit(10)
+                .lean();
+
+            return NextResponse.json({ teams });
+        }
+
         return NextResponse.json(
-            { message: "Provide clerkId or search query" },
+            { message: "Provide clerkId, search query, or available=true" },
             { status: 400 }
         );
     } catch (error) {
