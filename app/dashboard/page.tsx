@@ -14,6 +14,11 @@ import {
     Zap,
     Calendar,
     CreditCard,
+    Shield,
+    Gavel,
+    Home,
+    Info,
+    FileText,
 } from "lucide-react";
 
 interface TeamData {
@@ -389,13 +394,13 @@ export default function DashboardPage() {
                         </motion.div>
                     </motion.div>
 
-                    {/* Important Instructions */}
+                    {/* General Rules & Regulations */}
                     <motion.div
                         variants={itemVariants}
                         className="relative overflow-hidden rounded-2xl border border-cyan-500/20"
                     >
                         {/* Animated Background */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-900/20 via-blue-900/20 to-purple-900/20" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-900/10 via-blue-900/10 to-purple-900/10" />
                         <motion.div
                             className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent"
                             animate={{
@@ -409,7 +414,7 @@ export default function DashboardPage() {
                         />
 
                         <div className="relative p-6 md:p-8">
-                            <div className="flex items-center gap-3 mb-6">
+                            <div className="flex items-center gap-3 mb-8">
                                 <motion.div
                                     animate={{
                                         scale: [1, 1.1, 1],
@@ -421,45 +426,101 @@ export default function DashboardPage() {
                                     }}
                                     className="p-3 bg-cyan-500/20 rounded-xl"
                                 >
-                                    <Zap className="text-cyan-400" size={24} />
+                                    <FileText className="text-cyan-400" size={24} />
                                 </motion.div>
-                                <h2 className="text-xl md:text-2xl font-bold text-white">
-                                    Important Instructions
+                                <h2 className="text-xl md:text-2xl font-bold text-white uppercase tracking-tight">
+                                    General Rules & Regulations
                                 </h2>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {[
-                                    {
-                                        icon: "👥",
-                                        text: "Create a team before registering for any event.",
-                                    },
-                                    {
-                                        icon: "🔒",
-                                        text: "Once you register and pay, your team will be locked (no new members).",
-                                    },
-                                    {
-                                        icon: "✅",
-                                        text: "Ensure all team members have completed their profiles.",
-                                    },
-                                    {
-                                        icon: "📞",
-                                        text: "For support, contact the admin via the help desk.",
-                                    },
-                                ].map((item, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.5 + index * 0.1 }}
-                                        className="flex items-start gap-3 p-3 bg-gray-800/30 rounded-xl border border-gray-700/30"
-                                    >
-                                        <span className="text-xl">{item.icon}</span>
-                                        <p className="text-gray-300 text-sm">
-                                            {item.text}
-                                        </p>
-                                    </motion.div>
-                                ))}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Category 1 */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 text-cyan-400 font-bold text-sm uppercase tracking-wider mb-2">
+                                        <Users size={16} />
+                                        <span>1. Team Eligibility & Composition</span>
+                                    </div>
+                                    <ul className="space-y-3">
+                                        {[
+                                            "All members must belong to the same institution. Cross-institutional teams are not permitted.",
+                                            "A student cannot be a member of more than one team.",
+                                            "Teams must consist of a minimum of 3 and a maximum of 5 members."
+                                        ].map((rule, i) => (
+                                            <li key={i} className="flex gap-3 text-gray-400 text-sm leading-relaxed">
+                                                <span className="text-cyan-500/50">•</span>
+                                                {rule}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Category 2 */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 text-blue-400 font-bold text-sm uppercase tracking-wider mb-2">
+                                        <Zap size={16} />
+                                        <span>2. Participation & Bot Rules</span>
+                                    </div>
+                                    <ul className="space-y-3">
+                                        {[
+                                            "Teams may register multiple bots for the same event, provided each has a unique operator.",
+                                            "An operator is restricted to controlling only one bot per specific event.",
+                                            "The same robot may be entered into multiple different events if technical requirements are met."
+                                        ].map((rule, i) => (
+                                            <li key={i} className="flex gap-3 text-gray-400 text-sm leading-relaxed">
+                                                <span className="text-blue-500/50">•</span>
+                                                {rule}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Category 3 */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 text-red-400 font-bold text-sm uppercase tracking-wider mb-2">
+                                        <Shield size={16} />
+                                        <span>3. Conduct & Disqualification</span>
+                                    </div>
+                                    <ul className="space-y-3">
+                                        {[
+                                            "Judges' decisions are absolute and final. Zero tolerance for arguing.",
+                                            "Disqualified teams will not receive participation certificates.",
+                                            "Failure to meet technical or procedural requirements leads to immediate removal."
+                                        ].map((rule, i) => (
+                                            <li key={i} className="flex gap-3 text-gray-400 text-sm leading-relaxed">
+                                                <span className="text-red-500/50">•</span>
+                                                {rule}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Category 4 */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2 text-purple-400 font-bold text-sm uppercase tracking-wider mb-2">
+                                        <Home size={16} />
+                                        <span>4. Logistics & Accommodation</span>
+                                    </div>
+                                    <ul className="space-y-3">
+                                        {[
+                                            "Staying facilities (hostels) will be provided based on availability.",
+                                            "All accommodation costs must be covered by the participating teams.",
+                                            "Teams requiring a hostel must indicate this during the initial registration process."
+                                        ].map((rule, i) => (
+                                            <li key={i} className="flex gap-3 text-gray-400 text-sm leading-relaxed">
+                                                <span className="text-purple-500/50">•</span>
+                                                {rule}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* Note Section */}
+                            <div className="mt-8 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl flex gap-3 items-center">
+                                <Info size={18} className="text-yellow-500 shrink-0" />
+                                <p className="text-yellow-500/80 text-xs font-medium uppercase tracking-wide">
+                                    Note: If any event has less than 10 participating teams, prize distribution will be limited to 1st and 2nd position only.
+                                </p>
                             </div>
                         </div>
                     </motion.div>
