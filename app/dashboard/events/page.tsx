@@ -458,6 +458,7 @@ export default function DashboardEventsPage() {
   const [cartItems, setCartItems] = useState<string[]>([]);
   const [cartCount, setCartCount] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("Upcoming");
 
   useEffect(() => {
     fetchEvents();
@@ -596,6 +597,22 @@ export default function DashboardEventsPage() {
     return cartItems.includes(eventId);
   }
 
+  const filteredEvents = events.filter((event) => {
+    const eventDate = event.date ? new Date(event.date) : null;
+    const now = new Date();
+
+    if (activeFilter === "Upcoming") {
+      return !eventDate || eventDate >= now;
+    }
+    if (activeFilter === "Past") {
+      return eventDate && eventDate < now;
+    }
+    if (activeFilter === "Yours") {
+      return registeredEvents.some((r) => r.eventId === event._id);
+    }
+    return true;
+  });
+
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -619,13 +636,14 @@ export default function DashboardEventsPage() {
           </p>
         </div>
 
-        {/* Cart Icon Button */}
+        {/* Filter Buttons */}
         <div className="flex flex-wrap gap-2 items-center">
-          {["Upcoming", "Nearby", "Past", "Yours"].map((filter, i) => (
+          {["Upcoming", "Past", "Yours"].map((filter) => (
             <button
               key={filter}
+              onClick={() => setActiveFilter(filter)}
               className={`px-4 py-2 rounded-full text-xs font-bold font-mono transition-all ${
-                i === 0
+                activeFilter === filter
                   ? "bg-[#eab308] text-black hover:bg-[#eab308]/90"
                   : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white"
               }`}
@@ -689,13 +707,13 @@ export default function DashboardEventsPage() {
         </div>
       )}
 
-      {events.length === 0 ? (
+      {filteredEvents.length === 0 ? (
         <div className="text-center text-gray-400 py-12 font-mono border border-dashed border-zinc-800 rounded-2xl">
-          NO_ACTIVE_MISSIONS_DETECTED
+          NO_MISSIONS_FOUND_FOR_THIS_FILTER
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <HorizontalEventCard
               key={event.eventId}
               event={event}
