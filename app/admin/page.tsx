@@ -102,7 +102,7 @@ export default function AdminPage() {
             ["paid", "manual_verified"].includes(r.paymentStatus)
         ).length,
         pendingCount: registrations.filter((r) =>
-            ["initiated", "pending"].includes(r.paymentStatus)
+            ["initiated", "pending", "verification_pending"].includes(r.paymentStatus)
         ).length,
         totalRevenue: registrations
             .filter((r) => ["paid", "manual_verified"].includes(r.paymentStatus))
@@ -164,7 +164,8 @@ export default function AdminPage() {
                         <option value="paid">Paid</option>
                         <option value="manual_verified">Manually Verified</option>
                         <option value="initiated">Initiated</option>
-                        <option value="pending">Pending</option>
+                        <option value="pending">Pending Payment</option>
+                        <option value="verification_pending">Verification Pending</option>
                         <option value="failed">Failed</option>
                     </select>
                 </div>
@@ -218,7 +219,7 @@ export default function AdminPage() {
                                         <StatusBadge status={reg.paymentStatus} />
                                     </td>
                                     <td className="px-4 py-4">
-                                        {["initiated", "pending", "failed"].includes(
+                                        {["initiated", "pending", "verification_pending", "failed"].includes(
                                             reg.paymentStatus
                                         ) && (
                                                 <div className="flex gap-2">
@@ -294,6 +295,7 @@ function StatusBadge({ status }: { status: string }) {
         manual_verified: { color: "text-green-400", bg: "bg-green-500/10" },
         initiated: { color: "text-yellow-400", bg: "bg-yellow-500/10" },
         pending: { color: "text-yellow-400", bg: "bg-yellow-500/10" },
+        verification_pending: { color: "text-orange-400", bg: "bg-orange-500/10" },
         failed: { color: "text-red-400", bg: "bg-red-500/10" },
         refunded: { color: "text-gray-400", bg: "bg-gray-500/10" },
     };

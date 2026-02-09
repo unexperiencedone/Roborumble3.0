@@ -5,6 +5,8 @@ import Profile from "@/app/models/Profile";
 import Team from "@/app/models/Team";
 import Event from "@/app/models/Event";
 
+export const dynamic = "force-dynamic";
+
 // Force import to register models
 void Team;
 void Event;

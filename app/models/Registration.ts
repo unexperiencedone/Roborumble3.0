@@ -16,7 +16,7 @@ interface ManualVerification {
 export interface IRegistration extends Document {
     teamId?: mongoose.Types.ObjectId; // Optional for individual events
     eventId: mongoose.Types.ObjectId;
-    paymentStatus: "initiated" | "pending" | "paid" | "failed" | "refunded" | "manual_verified";
+    paymentStatus: "initiated" | "pending" | "paid" | "failed" | "refunded" | "manual_verified" | "verification_pending";
     razorpayOrderId?: string;
     razorpayPaymentId?: string;
     razorpaySignature?: string;
@@ -56,7 +56,7 @@ const RegistrationSchema = new Schema<IRegistration>(
         // Payment Tracking
         paymentStatus: {
             type: String,
-            enum: ["initiated", "pending", "paid", "failed", "refunded", "manual_verified"],
+            enum: ["initiated", "pending", "paid", "failed", "refunded", "manual_verified", "verification_pending"],
             default: "initiated",
         },
 

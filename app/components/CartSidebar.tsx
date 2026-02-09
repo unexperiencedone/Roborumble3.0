@@ -216,7 +216,10 @@ export default function CartSidebar({ isOpen, onClose, onCartUpdate }: CartSideb
                                     </div>
 
                                     <button
-                                        onClick={() => setCheckoutOpen(true)}
+                                        onClick={() => {
+                                            setCheckoutOpen(true);
+                                            onClose();
+                                        }}
                                         className="w-full py-4 bg-[#00F0FF] text-black font-black font-mono text-sm rounded-xl uppercase hover:bg-[#00F0FF]/90 transition-colors flex items-center justify-center gap-2"
                                     >
                                         <CreditCard size={18} />

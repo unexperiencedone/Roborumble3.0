@@ -206,18 +206,30 @@ export default function AdminPaymentsPage() {
                                 <div className="flex flex-col lg:flex-row gap-4">
                                     {/* Screenshot */}
                                     <div
-                                        className="w-full lg:w-48 h-48 bg-zinc-900 rounded-xl overflow-hidden cursor-pointer relative shrink-0"
-                                        onClick={() => setSelectedImage(sub.screenshotUrl)}
+                                        className="w-full lg:w-48 h-48 bg-zinc-900 rounded-xl overflow-hidden relative shrink-0"
                                     >
-                                        <Image
-                                            src={sub.screenshotUrl}
-                                            alt="Payment screenshot"
-                                            fill
-                                            className="object-cover hover:scale-105 transition-transform"
-                                        />
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <ExternalLink className="text-white" />
-                                        </div>
+                                        {sub.screenshotUrl === "FREE_EVENT" ? (
+                                            <div className="w-full h-full flex flex-col items-center justify-center text-zinc-500 bg-zinc-900/50 border border-white/10">
+                                                <CheckCircle className="text-green-500 mb-2" size={32} />
+                                                <span className="text-xs font-bold uppercase">Free Event</span>
+                                                <span className="text-[10px] opacity-70">No Payment Needed</span>
+                                            </div>
+                                        ) : (
+                                            <div 
+                                                className="w-full h-full relative cursor-pointer group"
+                                                onClick={() => setSelectedImage(sub.screenshotUrl)}
+                                            >
+                                                <Image
+                                                    src={sub.screenshotUrl}
+                                                    alt="Payment screenshot"
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-transform"
+                                                />
+                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <ExternalLink className="text-white" />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Details */}
@@ -281,20 +293,25 @@ export default function AdminPaymentsPage() {
                                     </div>
 
                                     {/* Actions */}
-                                    {sub.status === "pending" && (
-                                        <div className="flex lg:flex-col gap-2 shrink-0">
-                                            <button
-                                                onClick={() => handleAction(sub._id, "verify")}
-                                                disabled={processing === sub._id}
-                                                className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-green-500/20 border border-green-500/50 text-green-400 rounded-xl font-bold text-sm hover:bg-green-500/30 transition-colors disabled:opacity-50"
-                                            >
-                                                {processing === sub._id ? (
-                                                    <Loader2 size={16} className="animate-spin" />
-                                                ) : (
-                                                    <CheckCircle size={16} />
-                                                )}
-                                                Verify
-                                            </button>
+                                    <div className="flex lg:flex-col gap-2 shrink-0">
+                                        <button
+                                            onClick={() => handleAction(sub._id, "verify")}
+                                            disabled={processing === sub._id}
+                                            className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-3 border rounded-xl font-bold text-sm transition-colors disabled:opacity-50 ${
+                                                sub.status === "verified" 
+                                                ? "bg-blue-500/20 border-blue-500/50 text-blue-400 hover:bg-blue-500/30"
+                                                : "bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30"
+                                            }`}
+                                        >
+                                            {processing === sub._id ? (
+                                                <Loader2 size={16} className="animate-spin" />
+                                            ) : (
+                                                <CheckCircle size={16} />
+                                            )}
+                                            {sub.status === "verified" ? "Re-verify" : "Verify"}
+                                        </button>
+                                        
+                                        {sub.status !== "rejected" && (
                                             <button
                                                 onClick={() => setShowRejectModal(sub._id)}
                                                 disabled={processing === sub._id}
@@ -303,8 +320,8 @@ export default function AdminPaymentsPage() {
                                                 <XCircle size={16} />
                                                 Reject
                                             </button>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}

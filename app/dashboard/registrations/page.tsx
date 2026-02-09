@@ -74,6 +74,12 @@ const statusConfig: Record<
     bg: "bg-gray-500/10",
     border: "border-gray-500/50",
   },
+  verification_pending: {
+    icon: Loader2,
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/50",
+  },
 };
 
 export default function RegistrationsPage() {

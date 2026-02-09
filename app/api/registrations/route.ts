@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import connectDB from "@/lib/mongodb";
 import Registration from "@/app/models/Registration";
 
+export const dynamic = "force-dynamic";
+
 // Middleware-like check for admin session
 async function isAdmin() {
     const cookieStore = await cookies();

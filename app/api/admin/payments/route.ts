@@ -113,18 +113,62 @@ export async function POST(req: Request) {
             submission.verifiedAt = new Date();
             await submission.save();
 
-            // Update all related registrations to paid
+            // Update all related registrations to manual_verified
             for (const eventItem of submission.events) {
-                await Registration.findOneAndUpdate(
+                console.log(`Verifying event ${eventItem.eventId} for submission ${submission._id}`);
+                
+                // Primary update attempt using paymentSubmissionId
+                let reg = await Registration.findOneAndUpdate(
                     {
                         eventId: eventItem.eventId,
                         paymentSubmissionId: submission._id,
                     },
                     {
-                        paymentStatus: "paid",
+                        paymentStatus: "manual_verified",
                         amountPaid: submission.totalAmount / submission.events.length,
-                    }
+                    },
+                    { new: true }
                 );
+
+                // Fallback: Try finding by Team ID or User logic if primary failed
+                if (!reg) {
+                    console.warn(`Primary update failed for ${eventItem.eventId}. Trying fallback...`);
+                    const fallbackQuery: any = {
+                        eventId: eventItem.eventId,
+                        paymentStatus: { $in: ["verification_pending", "pending", "initiated"] }
+                    };
+
+                    if (submission.teamId) {
+                        fallbackQuery.teamId = submission.teamId;
+                    } else {
+                        // For individual, find by leader profile? 
+                        // Simplified: update if found by Clerk ID via Profile look up if needed, 
+                        // but for now relying on teamId or just logging the failure.
+                        // Actually, we can look up the profile from clerkId
+                        const profile = await Profile.findOne({ clerkId: submission.clerkId });
+                        if (profile) {
+                            fallbackQuery.selectedMembers = profile._id;
+                        }
+                    }
+                    
+                    if (fallbackQuery.teamId || fallbackQuery.selectedMembers) {
+                        reg = await Registration.findOneAndUpdate(
+                            fallbackQuery,
+                            {
+                                paymentStatus: "manual_verified",
+                                paymentSubmissionId: submission._id, // Link it now
+                                amountPaid: submission.totalAmount / submission.events.length,
+                            },
+                             { new: true }
+                        );
+                    }
+                }
+                
+                if (reg) {
+                    console.log(`Registration updated: ${reg._id}`);
+                } else {
+                    console.error(`Failed to find registration for event ${eventItem.eventId}`);
+                }
 
                 // Increment event registration count
                 await Event.findByIdAndUpdate(eventItem.eventId, {

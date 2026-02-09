@@ -49,7 +49,10 @@ export async function GET() {
         }, 0);
 
         return NextResponse.json({
-            items: cart.items,
+            items: cart.items.map((item: any) => ({
+                ...item.toObject(),
+                quantity: 1
+            })),
             teamId: cart.teamId,
             itemCount: cart.items.length,
             totalAmount,
@@ -96,7 +99,7 @@ export async function POST(req: Request) {
                 { teamId: teamId },
                 { selectedMembers: profile._id }
             ],
-            paymentStatus: { $in: ["paid", "manual_verified"] }
+            paymentStatus: { $in: ["paid", "manual_verified", "pending", "verification_pending"] }
         });
 
         if (existingReg) {
