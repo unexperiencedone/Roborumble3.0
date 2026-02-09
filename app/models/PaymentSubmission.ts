@@ -55,6 +55,10 @@ const PaymentSubmissionSchema = new Schema<IPaymentSubmission>(
 // Compound index for faster admin queries
 PaymentSubmissionSchema.index({ status: 1, createdAt: -1 });
 
+// Strategic indexes
+PaymentSubmissionSchema.index({ teamId: 1 });  // Team payment lookup
+PaymentSubmissionSchema.index({ clerkId: 1, status: 1 });  // User's payments
+
 const PaymentSubmission: Model<IPaymentSubmission> =
     mongoose.models.PaymentSubmission ||
     mongoose.model<IPaymentSubmission>("PaymentSubmission", PaymentSubmissionSchema);
