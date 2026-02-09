@@ -141,9 +141,9 @@ const HorizontalEventCard = ({
 
     return (
         <>
-            <div className="w-full bg-[#111] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col md:flex-row relative">
+            <div className="w-full bg-[#111] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all group flex flex-col sm:flex-row relative">
                 {/* Left: Image Section */}
-                <div className="md:w-[280px] h-[200px] md:h-auto relative shrink-0 overflow-hidden">
+                <div className="sm:w-[200px] md:w-[280px] h-[160px] sm:h-auto relative shrink-0 overflow-hidden">
                     {event.image ? (
                         <Image
                             src={event.image}
@@ -154,7 +154,7 @@ const HorizontalEventCard = ({
                     ) : (
                         <div className="w-full h-full bg-zinc-900 flex items-center justify-center relative overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-br from-[#00F0FF]/10 to-[#E661FF]/10" />
-                            <Icon size={60} className="text-zinc-700 relative z-10" />
+                            <Icon size={48} className="text-zinc-700 relative z-10 sm:size-60" />
                         </div>
                     )}
                     {/* Category Tag Overlay */}
@@ -165,38 +165,38 @@ const HorizontalEventCard = ({
                 </div>
 
                 {/* Right: Content Section */}
-                <div className="flex-1 p-6 flex flex-col md:flex-row gap-6">
+                <div className="flex-1 p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6">
                     <div className="flex-1 flex flex-col justify-center">
                         {/* Header: Date Badge & Meta */}
-                        <div className="flex items-start gap-4 mb-3">
-                            <div className="flex flex-col items-center bg-zinc-800/50 rounded-lg p-2 min-w-[60px] border border-white/5">
-                                <span className="text-2xl font-black text-white leading-none">{day}</span>
+                        <div className="flex items-start gap-3 sm:gap-4 mb-3">
+                            <div className="flex flex-col items-center bg-zinc-800/50 rounded-lg p-2 min-w-[50px] sm:min-w-[60px] border border-white/5">
+                                <span className="text-xl sm:text-2xl font-black text-white leading-none">{day}</span>
                                 <span className="text-[10px] font-black text-[#00F0FF] uppercase tracking-wider">{month}</span>
                             </div>
-                            <div className="flex flex-col pt-1">
+                            <div className="flex flex-col pt-1 min-w-0">
                                 <span className="text-[#E661FF] font-mono text-xs font-bold tracking-wide flex items-center gap-2">
                                     {fullDate} • {time}
                                 </span>
-                                <h3 className="text-2xl font-black text-white uppercase tracking-tight group-hover:text-[#00F0FF] transition-colors mt-1">
+                                <h3 className="text-lg sm:text-2xl font-black text-white uppercase tracking-tight group-hover:text-[#00F0FF] transition-colors mt-1 truncate">
                                     {event.title}
                                 </h3>
                             </div>
                         </div>
 
                         {/* Description */}
-                        <p className="text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-2 pl-[76px] font-mono">
+                        <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 line-clamp-2 pl-[66px] sm:pl-[76px] font-mono">
                             {event.description}
                         </p>
 
                         {/* Footer: Participants & Location */}
-                        <div className="flex items-center gap-6 pl-[76px]">
+                        <div className="flex items-center gap-3 sm:gap-6 pl-[66px] sm:pl-[76px] flex-wrap">
                             <div className="flex items-center -space-x-2">
                                 {[1, 2, 3].map((_, i) => (
-                                    <div key={i} className="w-6 h-6 rounded-full border border-black bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-500">
+                                    <div key={i} className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-black bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-500">
                                         <Users size={10} />
                                     </div>
                                 ))}
-                                <div className="w-6 h-6 rounded-full border border-black bg-[#222] flex items-center justify-center">
+                                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-black bg-[#222] flex items-center justify-center">
                                     <span className="text-[8px] text-white font-mono">+{event.currentRegistrations || 10}</span>
                                 </div>
                             </div>
@@ -204,7 +204,7 @@ const HorizontalEventCard = ({
                                 {event.currentRegistrations > 0 ? `${event.currentRegistrations} going` : "Be the first"}
                             </span>
 
-                            <div className="h-1 w-1 bg-zinc-700 rounded-full" />
+                            <div className="h-1 w-1 bg-zinc-700 rounded-full hidden sm:block" />
 
                             <span className="text-zinc-500 text-xs font-mono flex items-center gap-1">
                                 <MapPin size={12} /> CSJMU
@@ -213,36 +213,36 @@ const HorizontalEventCard = ({
                     </div>
 
                     {/* Far Right: Action Column */}
-                    <div className="flex md:flex-col items-center md:justify-center gap-4 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6 shrink-0 min-w-[140px]">
+                    <div className="flex sm:flex-col items-center sm:justify-center gap-3 sm:gap-4 border-t sm:border-t-0 sm:border-l border-white/10 pt-4 sm:pt-0 sm:pl-6 shrink-0 min-w-[120px] sm:min-w-[140px]">
                         <div className="text-center">
                             <p className="text-zinc-500 text-[10px] uppercase font-mono mb-1">Entry Fee</p>
-                            <p className="text-xl font-black text-white">
+                            <p className="text-lg sm:text-xl font-black text-white">
                                 {event.fees === 0 ? "FREE" : `₹${event.fees}`}
                             </p>
                         </div>
 
                         {isPaid ? (
-                            <button disabled className="w-full px-4 py-2 bg-green-500/10 border border-green-500/50 text-green-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default">
+                            <button disabled className="w-full px-3 sm:px-4 py-2 bg-green-500/10 border border-green-500/50 text-green-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default">
                                 <CheckCircle size={14} /> Registered
                             </button>
                         ) : isInCart ? (
                             <button
                                 disabled
-                                className="w-full px-4 py-2 bg-[#00F0FF]/10 border border-[#00F0FF]/50 text-[#00F0FF] font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default"
+                                className="w-full px-3 sm:px-4 py-2 bg-[#00F0FF]/10 border border-[#00F0FF]/50 text-[#00F0FF] font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2 cursor-default"
                             >
                                 <ShoppingCart size={14} /> In Cart
                             </button>
                         ) : addingToCart ? (
                             <button
                                 disabled
-                                className="w-full px-4 py-2 bg-zinc-800 text-zinc-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2"
+                                className="w-full px-3 sm:px-4 py-2 bg-zinc-800 text-zinc-400 font-bold font-mono text-xs rounded-lg uppercase flex items-center justify-center gap-2"
                             >
                                 <Loader2 size={14} className="animate-spin" /> Adding...
                             </button>
                         ) : (
                             <button
                                 onClick={handleRegisterClick}
-                                className="w-full px-4 py-2 bg-white text-black font-black font-mono text-xs rounded-lg uppercase hover:bg-[#00F0FF] transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]"
+                                className="w-full px-3 sm:px-4 py-2 bg-white text-black font-black font-mono text-xs rounded-lg uppercase hover:bg-[#00F0FF] transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(0,240,255,0.4)]"
                             >
                                 <Plus size={14} /> Add to Cart
                             </button>
@@ -254,19 +254,19 @@ const HorizontalEventCard = ({
             {/* Roster Selection Dialog */}
             {showRosterDialog && (
                 <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-[#111] border border-[#00F0FF] rounded-xl max-w-md w-full p-6 shadow-[0_0_50px_rgba(0,240,255,0.3)]">
-                        <h3 className="text-xl font-black text-white font-mono mb-2 uppercase">Select Squad Members</h3>
+                    <div className="bg-[#111] border border-[#00F0FF] rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-[0_0_50px_rgba(0,240,255,0.3)]">
+                        <h3 className="text-lg sm:text-xl font-black text-white font-mono mb-2 uppercase">Select Squad Members</h3>
                         <p className="text-zinc-400 text-xs font-mono mb-4">
                             Choose {minTeamSize === maxTeamSize ? minTeamSize : `${minTeamSize}-${maxTeamSize}`} members for {event.title}
                         </p>
 
                         <div className="mb-4 p-3 bg-zinc-900/50 border border-zinc-800 rounded">
                             <div className="flex justify-between items-center">
-                                <div>
+                                <div className="min-w-0 flex-1">
                                     <div className="text-[10px] text-zinc-500 font-mono uppercase">Team</div>
-                                    <div className="text-white font-bold font-mono">{teamData?.team?.name}</div>
+                                    <div className="text-white font-bold font-mono truncate">{teamData?.team?.name}</div>
                                 </div>
-                                <div className="text-right">
+                                <div className="text-right ml-4">
                                     <div className="text-[10px] text-zinc-500 font-mono uppercase">Selected</div>
                                     <div className={`font-bold font-mono ${selectedMembers.length < minTeamSize || selectedMembers.length > maxTeamSize ? 'text-red-500' : 'text-[#00F0FF]'}`}>
                                         {selectedMembers.length} / {minTeamSize === maxTeamSize ? minTeamSize : `${minTeamSize}-${maxTeamSize}`}
@@ -275,7 +275,7 @@ const HorizontalEventCard = ({
                             </div>
                         </div>
 
-                        <div className="max-h-64 overflow-y-auto space-y-2 mb-4">
+                        <div className="max-h-48 sm:max-h-64 overflow-y-auto space-y-2 mb-4">
                             {teamData?.team?.members?.map((member: any) => (
                                 <label
                                     key={member._id}
@@ -298,11 +298,11 @@ const HorizontalEventCard = ({
                                             }
                                         }}
                                     />
-                                    <div className={`w-4 h-4 border flex items-center justify-center ${selectedMembers.includes(member._id) ? "border-[#00F0FF] bg-[#00F0FF]" : "border-zinc-600"
+                                    <div className={`w-4 h-4 border flex items-center justify-center shrink-0 ${selectedMembers.includes(member._id) ? "border-[#00F0FF] bg-[#00F0FF]" : "border-zinc-600"
                                         }`}>
                                         {selectedMembers.includes(member._id) && <div className="w-2 h-2 bg-black" />}
                                     </div>
-                                    <span className="text-sm font-mono text-white">{member.username || member.email}</span>
+                                    <span className="text-sm font-mono text-white truncate">{member.username || member.email}</span>
                                 </label>
                             ))}
                         </div>
@@ -467,13 +467,13 @@ export default function DashboardEventsPage() {
     );
 
     return (
-        <div className="max-w-6xl mx-auto py-8 px-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="max-w-6xl mx-auto py-6 sm:py-8 px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-8 sm:mb-12">
                 <div>
-                    <h1 className="text-3xl font-black text-white flex items-center gap-3 font-mono">
-                        <Calendar className="text-[#00F0FF]" size={32} /> EVENTS
+                    <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2 sm:gap-3 font-mono">
+                        <Calendar className="text-[#00F0FF] shrink-0" size={28} /> EVENTS
                     </h1>
-                    <p className="text-zinc-500 mt-2 font-mono text-sm max-w-xl">
+                    <p className="text-zinc-500 mt-1 sm:mt-2 font-mono text-xs sm:text-sm max-w-xl">
                         Browse and register for upcoming competitions. Secure your spot in the arena.
                     </p>
                 </div>
@@ -504,7 +504,7 @@ export default function DashboardEventsPage() {
             </div>
 
             {message.text && (
-                <div className={`px-4 py-3 rounded-lg mb-8 border font-mono text-sm ${message.type === "success"
+                <div className={`px-3 sm:px-4 py-3 rounded-lg mb-6 sm:mb-8 border font-mono text-xs sm:text-sm ${message.type === "success"
                     ? "bg-green-500/10 border-green-500/50 text-green-400"
                     : "bg-red-500/10 border-red-500/50 text-red-400"
                     }`}>
@@ -514,10 +514,10 @@ export default function DashboardEventsPage() {
 
             {/* Overloading screen if registering */}
             {addingToCart && (
-                <div className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-md flex items-center justify-center">
-                    <div className="flex flex-col items-center bg-black border border-[#00F0FF]/30 p-8 rounded-2xl shadow-[0_0_50px_rgba(0,240,255,0.2)]">
-                        <Loader2 className="animate-spin text-[#00F0FF]" size={48} />
-                        <p className="text-[#00F0FF] font-mono mt-4 animate-pulse font-bold tracking-widest">TRANSMITTING_DATA...</p>
+                <div className="fixed inset-0 z-[10000] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+                    <div className="flex flex-col items-center bg-black border border-[#00F0FF]/30 p-6 sm:p-8 rounded-2xl shadow-[0_0_50px_rgba(0,240,255,0.2)]">
+                        <Loader2 className="animate-spin text-[#00F0FF]" size={40} />
+                        <p className="text-[#00F0FF] font-mono mt-4 animate-pulse font-bold tracking-widest text-sm sm:text-base">TRANSMITTING_DATA...</p>
                     </div>
                 </div>
             )}
@@ -553,6 +553,25 @@ export default function DashboardEventsPage() {
                     </div>
                 );
             })()}
+            {events.length === 0 ? (
+                <div className="text-center text-gray-400 py-8 sm:py-12 font-mono border border-dashed border-zinc-800 rounded-2xl text-sm">
+                    NO_ACTIVE_MISSIONS_DETECTED
+                </div>
+            ) : (
+                <div className="flex flex-col gap-4 sm:gap-6">
+                    {events.map((event) => (
+                        <HorizontalEventCard
+                            key={event.eventId}
+                            event={event}
+                            registration={getRegistrationStatus(event.eventId)}
+                            onAddToCart={handleAddToCart}
+                            teamData={teamData}
+                            isInCart={isEventInCart(event.eventId)}
+                            addingToCart={addingToCart === event.eventId}
+                        />
+                    ))}
+                </div>
+            )}
 
             {/* Cart Sidebar */}
             <CartSidebar

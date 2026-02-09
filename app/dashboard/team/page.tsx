@@ -505,16 +505,16 @@ export default function TeamPage() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="max-w-4xl space-y-8"
+                className="max-w-4xl w-full space-y-6 sm:space-y-8 px-4 sm:px-0"
             >
                 {/* Header */}
                 <motion.div variants={itemVariants} className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <Users className="text-cyan-400" />
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                            <Users className="text-cyan-400 shrink-0" size={28} />
                             Team Management
                         </h1>
-                        <p className="text-gray-400 mt-1">
+                        <p className="text-gray-400 mt-1 text-sm sm:text-base">
                             {team ? "Manage your team and invite members" : "Create or join a team to compete"}
                         </p>
                     </div>
@@ -529,18 +529,18 @@ export default function TeamPage() {
                             className="relative overflow-hidden rounded-2xl border border-gray-700/50 bg-gradient-to-br from-gray-800/60 to-gray-900/80"
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent" />
-                            <div className="relative p-6">
-                                <div className="flex items-start justify-between mb-6">
-                                    <div>
-                                        <div className="flex items-center gap-3">
-                                            <h2 className="text-2xl font-bold text-white">{team.name}</h2>
+                            <div className="relative p-4 sm:p-6">
+                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+                                    <div className="min-w-0">
+                                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                                            <h2 className="text-xl sm:text-2xl font-bold text-white truncate">{team.name}</h2>
                                             {isLeader && (
-                                                <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium flex items-center gap-1">
+                                                <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium flex items-center gap-1 shrink-0">
                                                     <Crown size={12} /> Leader
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="text-gray-400 mt-1 flex items-center gap-2">
+                                        <p className="text-gray-400 mt-1 flex flex-wrap items-center gap-2 text-sm">
                                             {team.isLocked ? (
                                                 <span className="text-red-400 flex items-center gap-1">
                                                     🔒 Team Locked (Payment Made)
@@ -550,7 +550,7 @@ export default function TeamPage() {
                                                     ✓ Open for Members
                                                 </span>
                                             )}
-                                            <span className="text-gray-600">•</span>
+                                            <span className="text-gray-600 hidden sm:inline">•</span>
                                             <span>{team.members?.length || 0}/50 Members</span>
                                         </p>
                                     </div>
@@ -561,7 +561,7 @@ export default function TeamPage() {
                                             whileTap={{ scale: 0.98 }}
                                             onClick={leaveTeam}
                                             disabled={actionLoading === "leave"}
-                                            className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-500/20 transition-colors flex items-center gap-2 text-sm"
+                                            className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-500/20 transition-colors flex items-center justify-center gap-2 text-sm shrink-0"
                                         >
                                             {actionLoading === "leave" ? (
                                                 <Loader2 size={16} className="animate-spin" />
@@ -606,7 +606,7 @@ export default function TeamPage() {
                         {isLeader && !team.isLocked && (
                             <motion.div
                                 variants={itemVariants}
-                                className="rounded-2xl border border-gray-700/50 bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-6"
+                            className="rounded-2xl border border-gray-700/50 bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-4 sm:p-6"
                             >
                                 <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                                     <UserPlus size={18} className="text-cyan-400" />
@@ -642,31 +642,32 @@ export default function TeamPage() {
                                                     key={result._id}
                                                     initial={{ opacity: 0, x: -10 }}
                                                     animate={{ opacity: 1, x: 0 }}
-                                                    className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl border border-gray-700/30 group hover:border-cyan-500/30 transition-colors"
+                                                 className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-800/50 rounded-xl border border-gray-700/30 group hover:border-cyan-500/30 transition-colors"
                                                 >
-                                                    <Avatar user={result} />
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-white font-medium truncate">
-                                                            {result.fullName || result.username}
-                                                        </p>
-                                                        <p className="text-gray-400 text-sm flex items-center gap-2 truncate">
-                                                            <Mail size={12} />
-                                                            {result.email}
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <Avatar user={result} />
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-white font-medium truncate">
+                                                                {result.fullName || result.username}
+                                                            </p>
+                                                            <p className="text-gray-400 text-sm flex items-center gap-2 truncate">
+                                                                <Mail size={12} className="shrink-0" />
+                                                                {result.email}
+                                                            </p>
                                                             {result.college && (
-                                                                <>
-                                                                    <span className="text-gray-600">•</span>
-                                                                    <School size={12} />
+                                                                <p className="text-gray-400 text-sm flex items-center gap-2 truncate">
+                                                                    <School size={12} className="shrink-0" />
                                                                     {result.college}
-                                                                </>
+                                                                </p>
                                                             )}
-                                                        </p>
+                                                        </div>
                                                     </div>
                                                     <motion.button
                                                         whileHover={{ scale: 1.05 }}
                                                         whileTap={{ scale: 0.95 }}
                                                         onClick={() => inviteMember(result._id, result.username || result.email)}
                                                         disabled={actionLoading === `invite-${result._id}`}
-                                                        className="px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-colors flex items-center gap-2 text-sm"
+                                                        className="px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-colors flex items-center justify-center gap-2 text-sm shrink-0 w-full sm:w-auto"
                                                     >
                                                         {actionLoading === `invite-${result._id}` ? (
                                                             <Loader2 size={14} className="animate-spin" />
@@ -733,7 +734,7 @@ export default function TeamPage() {
                         {isLeader && joinRequests.length > 0 && (
                             <motion.div
                                 variants={itemVariants}
-                                className="rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 p-6"
+                                className="rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 p-4 sm:p-6"
                             >
                                 <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                                     <UserCircle size={18} className="text-yellow-400" />
@@ -743,34 +744,38 @@ export default function TeamPage() {
                                     {joinRequests.map((req) => (
                                         <div
                                             key={req._id}
-                                            className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-xl"
+                                            className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-800/50 rounded-xl"
                                         >
-                                            <Avatar user={req} />
-                                            <div className="flex-1">
-                                                <p className="text-white">{req.username}</p>
-                                                <p className="text-gray-400 text-sm">{req.email}</p>
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <Avatar user={req} />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-white truncate">{req.username}</p>
+                                                    <p className="text-gray-400 text-sm truncate">{req.email}</p>
+                                                </div>
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 sm:shrink-0">
                                                 <motion.button
-                                                    whileHover={{ scale: 1.1 }}
-                                                    whileTap={{ scale: 0.9 }}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
                                                     onClick={() => respondToRequest(req._id, true)}
                                                     disabled={actionLoading === `request-${req._id}`}
-                                                    className="p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30"
+                                                    className="flex-1 sm:flex-none px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 flex items-center justify-center gap-2"
                                                 >
                                                     {actionLoading === `request-${req._id}` ? (
                                                         <Loader2 size={18} className="animate-spin" />
                                                     ) : (
                                                         <Check size={18} />
                                                     )}
+                                                    <span className="sm:hidden">Accept</span>
                                                 </motion.button>
                                                 <motion.button
-                                                    whileHover={{ scale: 1.1 }}
-                                                    whileTap={{ scale: 0.9 }}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
                                                     onClick={() => respondToRequest(req._id, false)}
-                                                    className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"
+                                                    className="flex-1 sm:flex-none px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 flex items-center justify-center gap-2"
                                                 >
                                                     <X size={18} />
+                                                    <span className="sm:hidden">Decline</span>
                                                 </motion.button>
                                             </div>
                                         </div>
@@ -786,7 +791,7 @@ export default function TeamPage() {
                         {invitations.length > 0 && (
                             <motion.div
                                 variants={itemVariants}
-                                className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 p-6"
+                                className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 p-4 sm:p-6"
                             >
                                 <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                                     <Sparkles size={18} className="text-cyan-400" />
@@ -796,21 +801,21 @@ export default function TeamPage() {
                                     {invitations.map((inv) => (
                                         <div
                                             key={inv._id}
-                                            className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl"
+                                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-800/50 rounded-xl gap-4"
                                         >
-                                            <div>
-                                                <p className="text-white font-medium">{inv.name}</p>
-                                                <p className="text-gray-400 text-sm">
+                                            <div className="min-w-0">
+                                                <p className="text-white font-medium truncate">{inv.name}</p>
+                                                <p className="text-gray-400 text-sm truncate">
                                                     From: {inv.leaderId.username}
                                                 </p>
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 shrink-0">
                                                 <motion.button
                                                     whileHover={{ scale: 1.02 }}
                                                     whileTap={{ scale: 0.98 }}
                                                     onClick={() => respondToInvitation(inv._id, true)}
                                                     disabled={actionLoading === `respond-${inv._id}`}
-                                                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2"
+                                                    className="flex-1 sm:flex-none px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center justify-center gap-2"
                                                 >
                                                     {actionLoading === `respond-${inv._id}` ? (
                                                         <Loader2 size={16} className="animate-spin" />
@@ -823,7 +828,7 @@ export default function TeamPage() {
                                                     whileHover={{ scale: 1.02 }}
                                                     whileTap={{ scale: 0.98 }}
                                                     onClick={() => respondToInvitation(inv._id, false)}
-                                                    className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
+                                                    className="flex-1 sm:flex-none px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
                                                 >
                                                     Decline
                                                 </motion.button>
@@ -846,7 +851,7 @@ export default function TeamPage() {
                             <p className="text-gray-400 text-sm mb-4">
                                 As a team leader, you can invite members and manage your team.
                             </p>
-                            <div className="flex gap-3">
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <input
                                     type="text"
                                     value={teamName}
@@ -860,7 +865,7 @@ export default function TeamPage() {
                                     whileTap={{ scale: 0.98 }}
                                     onClick={createTeam}
                                     disabled={actionLoading === "create"}
-                                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transition-all flex items-center gap-2 font-medium"
+                                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-400 hover:to-blue-500 transition-all flex items-center justify-center gap-2 font-medium shrink-0"
                                 >
                                     {actionLoading === "create" ? (
                                         <Loader2 size={18} className="animate-spin" />
@@ -875,7 +880,7 @@ export default function TeamPage() {
                         {/* Available Teams - Auto-loaded */}
                         <motion.div
                             variants={itemVariants}
-                            className="rounded-2xl border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-500/5 p-6"
+                            className="rounded-2xl border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-500/5 p-4 sm:p-6"
                         >
                             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                                 <Users size={24} className="text-green-400" />
@@ -899,20 +904,24 @@ export default function TeamPage() {
                                             key={t._id}
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-green-500/30 transition-all group"
+                                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-green-500/30 transition-all group gap-4"
                                         >
                                             <div className="flex items-center gap-3 min-w-0">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold shrink-0">
                                                     {t.name?.[0]?.toUpperCase() || "T"}
                                                 </div>
                                                 <div className="min-w-0">
                                                     <p className="text-white font-medium truncate">{t.name}</p>
-                                                    <p className="text-gray-400 text-sm flex items-center gap-2">
-                                                        <Crown size={12} className="text-yellow-400" />
-                                                        {t.leaderId?.username || "Unknown"}
-                                                        <span className="text-gray-600">•</span>
-                                                        <Users size={12} />
-                                                        {t.members?.length || 0} members
+                                                    <p className="text-gray-400 text-sm flex flex-wrap items-center gap-1 sm:gap-2">
+                                                        <span className="flex items-center gap-1">
+                                                            <Crown size={12} className="text-yellow-400" />
+                                                            {t.leaderId?.username || "Unknown"}
+                                                        </span>
+                                                        <span className="text-gray-600 hidden sm:inline">•</span>
+                                                        <span className="flex items-center gap-1">
+                                                            <Users size={12} />
+                                                            {t.members?.length || 0} members
+                                                        </span>
                                                     </p>
                                                 </div>
                                             </div>
@@ -921,7 +930,7 @@ export default function TeamPage() {
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => requestJoin(t._id)}
                                                 disabled={actionLoading === `join-${t._id}`}
-                                                className="px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors flex items-center gap-2 shrink-0"
+                                                className="px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto"
                                             >
                                                 {actionLoading === `join-${t._id}` ? (
                                                     <Loader2 size={16} className="animate-spin" />
@@ -951,7 +960,7 @@ export default function TeamPage() {
                                 <Search size={24} className="text-purple-400" />
                                 Find a Team to Join
                             </h2>
-                            <div className="flex gap-3 mb-4">
+                            <div className="flex flex-col sm:flex-row gap-3 mb-4">
                                 <input
                                     type="text"
                                     value={teamSearchQuery}
@@ -964,7 +973,7 @@ export default function TeamPage() {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={searchTeams}
-                                    className="px-6 py-3 bg-gray-700 text-white rounded-xl hover:bg-gray-600 transition-all flex items-center gap-2"
+                                    className="px-6 py-3 bg-gray-700 text-white rounded-xl hover:bg-gray-600 transition-all flex items-center justify-center gap-2 shrink-0"
                                 >
                                     <Search size={18} />
                                     Search
@@ -976,10 +985,10 @@ export default function TeamPage() {
                                     {teamSearchResults.map((t) => (
                                         <div
                                             key={t._id}
-                                            className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/50"
+                                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 gap-4"
                                         >
-                                            <div>
-                                                <p className="text-white font-medium">{t.name}</p>
+                                            <div className="min-w-0">
+                                                <p className="text-white font-medium truncate">{t.name}</p>
                                                 <p className="text-gray-400 text-sm">
                                                     {t.members?.length || 0} members
                                                 </p>
@@ -989,7 +998,7 @@ export default function TeamPage() {
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => requestJoin(t._id)}
                                                 disabled={actionLoading === `join-${t._id}`}
-                                                className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors flex items-center gap-2"
+                                                className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto"
                                             >
                                                 {actionLoading === `join-${t._id}` ? (
                                                     <Loader2 size={16} className="animate-spin" />
