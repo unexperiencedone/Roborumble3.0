@@ -62,6 +62,13 @@ const ProfileSchema = new Schema<IProfile>(
     { timestamps: true }
 );
 
+// Strategic indexes for fast queries
+ProfileSchema.index({ email: 1 });
+ProfileSchema.index({ currentTeamId: 1 });
+ProfileSchema.index({ role: 1 });
+ProfileSchema.index({ college: 1 });  // For analytics/filtering
+ProfileSchema.index({ clerkId: 1, email: 1 });  // Compound for auth queries
+
 const Profile: Model<IProfile> =
     mongoose.models.Profile || mongoose.model<IProfile>("Profile", ProfileSchema);
 
