@@ -60,6 +60,10 @@ CartSchema.methods.hasEvent = function (eventId: string): boolean {
     );
 };
 
+// Strategic indexes
+CartSchema.index({ teamId: 1 });  // Find cart by team
+CartSchema.index({ clerkId: 1, 'items.eventId': 1 });  // Check if event in cart
+
 const Cart: Model<ICart> =
     mongoose.models.Cart || mongoose.model<ICart>("Cart", CartSchema);
 

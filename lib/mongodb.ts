@@ -35,16 +35,20 @@ async function connectDB(): Promise<typeof mongoose> {
             bufferCommands: false, // Disable buffering
             serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of default 30s
             socketTimeoutMS: 45000, // Close sockets after 45s
+            maxPoolSize: 50, // Handle concurrent requests (production)
+            minPoolSize: 10, // Keep connections warm
+            retryWrites: true, // Auto-retry failed writes
+            retryReads: true, // Auto-retry failed reads
         };
 
         if (validURI === "mongodb://mock-build-uri") {
-             console.warn("Mocking MongoDB connection for build.");
-             cached.promise = Promise.resolve({} as any);
+            console.warn("Mocking MongoDB connection for build.");
+            cached.promise = Promise.resolve({} as any);
         } else {
-             cached.promise = mongoose.connect(validURI, opts).then((mongoose) => {
-                 console.log("Connected to MongoDB Atlas");
-                 return mongoose;
-             });
+            cached.promise = mongoose.connect(validURI, opts).then((mongoose) => {
+                console.log("Connected to MongoDB Atlas");
+                return mongoose;
+            });
         }
     }
 

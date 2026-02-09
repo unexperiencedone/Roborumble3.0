@@ -13,6 +13,16 @@ interface ManualVerification {
     notes?: string;
 }
 
+// Denormalized data for fast reads (avoids expensive populate calls)
+interface DenormalizedData {
+    teamName?: string;
+    eventTitle?: string;
+    eventSlug?: string;
+    leaderName?: string;
+    leaderEmail?: string;
+    memberCount?: number;
+}
+
 export interface IRegistration extends Document {
     teamId?: mongoose.Types.ObjectId; // Optional for individual events
     eventId: mongoose.Types.ObjectId;
@@ -30,6 +40,7 @@ export interface IRegistration extends Document {
     selectedMembers: mongoose.Types.ObjectId[]; // The squad for this event
     checkedIn: boolean;
     checkedInAt?: Date;
+    _denormalized?: DenormalizedData; // Fast-read cache
 }
 
 const RegistrationSchema = new Schema<IRegistration>(
@@ -90,6 +101,16 @@ const RegistrationSchema = new Schema<IRegistration>(
         // Event Check-in
         checkedIn: { type: Boolean, default: false },
         checkedInAt: Date,
+
+        // Denormalized data for fast reads (populated on create/update)
+        _denormalized: {
+            teamName: String,
+            eventTitle: String,
+            eventSlug: String,
+            leaderName: String,
+            leaderEmail: String,
+            memberCount: Number,
+        },
     },
     { timestamps: true }
 );
@@ -97,6 +118,12 @@ const RegistrationSchema = new Schema<IRegistration>(
 // Prevent duplicate registrations (one team can only register once per event)
 RegistrationSchema.index({ teamId: 1, eventId: 1 }, { unique: true });
 
+// Strategic indexes for common queries
+RegistrationSchema.index({ eventId: 1, paymentStatus: 1 });  // Event dashboard
+RegistrationSchema.index({ selectedMembers: 1 });  // Find user's registrations
+RegistrationSchema.index({ paymentStatus: 1, createdAt: -1 });  // Admin payments list
+RegistrationSchema.index({ checkedIn: 1, eventId: 1 });  // Check-in queries
+RegistrationSchema.index({ teamId: 1, paymentStatus: 1 });  // Team payment status
 const Registration: Model<IRegistration> =
     mongoose.models.Registration ||
     mongoose.model<IRegistration>("Registration", RegistrationSchema);

@@ -111,6 +111,27 @@ export function parseTeamSize(teamSize: string): { min: number; max: number } {
     return { min, max };
 }
 
+// Strategic indexes for fast queries
+EventSchema.index({ category: 1, isLive: 1 });  // Filter by category
+EventSchema.index({ isLive: 1, createdAt: -1 });  // Active events list
+EventSchema.index({ fees: 1, isLive: 1 });  // Filter by price
+
+// Auto-create discussion channel when event is created
+EventSchema.post('save', async function (doc) {
+    // Check if channel already exists
+    const Channel = (await import('./Channel')).default;
+    const existing = await Channel.findOne({ eventId: doc._id });
+
+    if (!existing) {
+        await Channel.create({
+            eventId: doc._id,
+            name: `${doc.title} Discussion`,
+            description: `Discussion forum for ${doc.title} participants`,
+            isActive: doc.isLive,
+        });
+    }
+});
+
 const Event: Model<IEvent> =
     mongoose.models.Event || mongoose.model<IEvent>("Event", EventSchema);
 

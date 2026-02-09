@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserButton, SignOutButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -19,9 +19,23 @@ import {
     ArrowLeft,
     Calendar,
     ShoppingCart,
+    Lock,
+    Unlock,
+    MessageSquare,
 } from "lucide-react";
 import NotificationBell from "@/app/components/NotificationBell";
 import CartSidebar from "@/app/components/CartSidebar";
+
+interface ChannelItem {
+    channelId: string;
+    eventId: string;
+    name: string;
+    eventTitle: string;
+    eventSlug: string;
+    category: string;
+    postCount: number;
+    isLocked: boolean;
+}
 
 const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home, color: "cyan" },
@@ -39,12 +53,33 @@ export default function DashboardLayout({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const [cartCount, setCartCount] = useState(0);
+    const [channels, setChannels] = useState<ChannelItem[]>([]);
+    const [channelsLoading, setChannelsLoading] = useState(true);
+
+    // Fetch user's event channels with access status
+    useEffect(() => {
+        async function fetchChannels() {
+            try {
+                const res = await fetch('/api/user/channels');
+                if (res.ok) {
+                    const data = await res.json();
+                    setChannels(data.channels || []);
+                }
+            } catch (error) {
+                console.error('Failed to fetch channels:', error);
+            } finally {
+                setChannelsLoading(false);
+            }
+        }
+        fetchChannels();
+    }, []);
 
     const colorClasses = {
         cyan: "from-cyan-500/20 to-cyan-500/5 border-cyan-500/30 text-cyan-400",
         blue: "from-blue-500/20 to-blue-500/5 border-blue-500/30 text-blue-400",
         yellow: "from-yellow-500/20 to-yellow-500/5 border-yellow-500/30 text-yellow-400",
         purple: "from-purple-500/20 to-purple-500/5 border-purple-500/30 text-purple-400",
+        green: "from-green-500/20 to-green-500/5 border-green-500/30 text-green-400",
     };
 
     return (
@@ -147,6 +182,76 @@ export default function DashboardLayout({
                             </Link>
                         );
                     })}
+
+                    {/* Event Channels Section */}
+                    {channels.length > 0 && (
+                        <div className="pt-4 mt-4 border-t border-gray-800/50">
+                            <div className="flex items-center gap-2 px-4 py-2 text-gray-500">
+                                <MessageSquare size={14} />
+                                <span className="text-xs font-semibold uppercase tracking-wider">Event Channels</span>
+                            </div>
+                            <div className="space-y-1 mt-1">
+                                {channels.map((channel) => {
+                                    const isActive = pathname === `/dashboard/channels/${channel.eventId}`;
+                                    const isLocked = channel.isLocked;
+
+                                    if (isLocked) {
+                                        // Locked channel - show as disabled with lock icon
+                                        return (
+                                            <div
+                                                key={channel.channelId}
+                                                className="relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-600 cursor-not-allowed opacity-60"
+                                                title="Register & pay to unlock this channel"
+                                            >
+                                                <Lock size={16} className="text-gray-600" />
+                                                <span className="font-medium text-sm truncate flex-1">{channel.eventTitle}</span>
+                                                <span className="text-[10px] bg-gray-700/50 px-1.5 py-0.5 rounded text-gray-500">Locked</span>
+                                            </div>
+                                        );
+                                    }
+
+                                    // Unlocked channel - clickable link
+                                    return (
+                                        <Link
+                                            key={channel.channelId}
+                                            href={`/dashboard/channels/${channel.eventId}`}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className={`
+                                                relative flex items-center gap-3 px-4 py-2.5 rounded-xl
+                                                transition-all duration-200
+                                                ${isActive
+                                                    ? `bg-gradient-to-r ${colorClasses.green} border`
+                                                    : "text-gray-400 hover:bg-gray-800/50 hover:text-white"
+                                                }
+                                            `}
+                                        >
+                                            {isActive && (
+                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-current rounded-r-full" />
+                                            )}
+                                            <Unlock size={16} className="text-green-400" />
+                                            <span className="font-medium text-sm truncate flex-1">{channel.eventTitle}</span>
+                                            {channel.postCount > 0 && (
+                                                <span className="text-[10px] bg-green-500/20 px-1.5 py-0.5 rounded text-green-400">
+                                                    {channel.postCount}
+                                                </span>
+                                            )}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Loading state for channels */}
+                    {channelsLoading && (
+                        <div className="pt-4 mt-4 border-t border-gray-800/50">
+                            <div className="flex items-center gap-2 px-4 py-2 text-gray-500">
+                                <MessageSquare size={14} />
+                                <span className="text-xs font-semibold uppercase tracking-wider">Event Channels</span>
+                            </div>
+                            <div className="px-4 py-3 text-gray-600 text-sm">Loading...</div>
+                        </div>
+                    )}
                 </nav>
 
                 {/* Bottom Section */}
