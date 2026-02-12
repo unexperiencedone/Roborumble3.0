@@ -193,7 +193,7 @@ const teamData = {
     {
       name: "Lucky Kumar",
       role: "PR & Media Head",
-      img: "/lucky.jpeg",
+      img: "/lucky copy.jpeg",
       socials: [
         { icon: FaInstagram, link: "#" },
         { icon: FaLinkedinIn, link: "#" },
