@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Search, X, ChevronDown, Plus, Loader2 } from "lucide-react";
+import { Search, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 
@@ -13,8 +13,6 @@ interface SearchableSelectProps {
     label?: string;
     placeholder?: string;
     icon?: LucideIcon;
-    allowOther?: boolean;
-    otherLabel?: string;
 }
 
 export default function SearchableSelect({
@@ -23,27 +21,26 @@ export default function SearchableSelect({
     options,
     required = false,
     label = "Select",
-    placeholder = "Search...",
+    placeholder = "Search or type...",
     icon: Icon,
-    allowOther = true,
-    otherLabel = "Other option not listed",
 }: SearchableSelectProps) {
     const [query, setQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
-    const [showOtherInput, setShowOtherInput] = useState(false);
-    const [otherValue, setOtherValue] = useState("");
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Close dropdown on outside click
+    // Close dropdown on outside click and commit typed value
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
                 setIsOpen(false);
+                if (query.trim() && !value) {
+                    onChange(query.trim());
+                }
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    }, [query, value, onChange]);
 
     const filteredOptions = query.length > 0
         ? options.filter((opt) =>
@@ -56,7 +53,6 @@ export default function SearchableSelect({
             onChange(val);
             setQuery("");
             setIsOpen(false);
-            setShowOtherInput(false);
         },
         [onChange]
     );
@@ -66,16 +62,6 @@ export default function SearchableSelect({
     const handleClear = () => {
         onChange("");
         setQuery("");
-        setShowOtherInput(false);
-        setOtherValue("");
-    };
-
-    const handleOtherSubmit = () => {
-        const trimmed = otherValue.trim();
-        if (!trimmed) return;
-        handleSelect(trimmed);
-        setShowOtherInput(false);
-        setOtherValue("");
     };
 
     return (
@@ -86,7 +72,7 @@ export default function SearchableSelect({
             </label>
 
             {/* Selected Value Display */}
-            {value && !showOtherInput ? (
+            {value ? (
                 <div className="flex items-center gap-2 w-full pl-10 pr-3 py-2.5 bg-gray-900 border border-cyan-500/50 rounded-lg text-white text-sm relative">
                     {Icon ? (
                         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400" />
@@ -102,53 +88,8 @@ export default function SearchableSelect({
                         <X size={14} />
                     </button>
                 </div>
-            ) : showOtherInput ? (
-                <div className="space-y-2">
-                    <div className="relative">
-                        {Icon ? (
-                            <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                        ) : (
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                        )}
-                        <input
-                            type="text"
-                            value={otherValue}
-                            onChange={(e) => setOtherValue(e.target.value)}
-                            placeholder="Type your option..."
-                            className="w-full pl-10 pr-3 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-all text-sm"
-                            autoFocus
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    e.preventDefault();
-                                    handleOtherSubmit();
-                                }
-                            }}
-                        />
-                    </div>
-                    <div className="flex gap-2">
-                        <button
-                            type="button"
-                            onClick={handleOtherSubmit}
-                            disabled={!otherValue.trim()}
-                            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-cyan-400 text-sm hover:bg-cyan-500/30 transition-colors disabled:opacity-50"
-                        >
-                            <Plus size={14} />
-                            Confirm
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setShowOtherInput(false);
-                                setOtherValue("");
-                            }}
-                            className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-sm hover:bg-gray-700 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
             ) : (
-                /* Search input */
+                /* Search input - user can type freely */
                 <div className="relative">
                     {Icon ? (
                         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -163,6 +104,13 @@ export default function SearchableSelect({
                             if (!isOpen) setIsOpen(true);
                         }}
                         onFocus={() => setIsOpen(true)}
+                        onBlur={() => {
+                            setTimeout(() => {
+                                if (query.trim() && !value) {
+                                    onChange(query.trim());
+                                }
+                            }, 200);
+                        }}
                         placeholder={placeholder}
                         className="w-full pl-10 pr-8 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-all text-sm"
                     />
@@ -195,25 +143,11 @@ export default function SearchableSelect({
                                     ) : (
                                         <div className="py-3 px-4">
                                             <p className="text-gray-500 text-sm">
-                                                No options found
+                                                No match — your typed value will be used
                                             </p>
                                         </div>
                                     )}
                                 </div>
-                                {allowOther && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setShowOtherInput(true);
-                                            setIsOpen(false);
-                                            setOtherValue("");
-                                        }}
-                                        className="w-full text-left px-4 py-2.5 text-sm text-purple-400 hover:bg-purple-500/10 transition-colors flex items-center gap-2 border-t border-gray-600 shrink-0"
-                                    >
-                                        <Plus size={14} />
-                                        {otherLabel}
-                                    </button>
-                                )}
                             </motion.div>
                         )}
                     </AnimatePresence>

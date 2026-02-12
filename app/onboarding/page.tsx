@@ -488,17 +488,16 @@ export default function OnboardingPage() {
               />
               <div className="grid grid-cols-2 gap-4 relative z-0">
                 <SearchableSelect
-                  label="Degree"
+                  label="Degree/Grade"
                   value={formData.degree}
                   onChange={(val) => {
                     setFormData((prev) => ({ ...prev, degree: val }));
                     setError("");
                   }}
                   options={degreeOptions}
-                  placeholder="Search degree..."
+                  placeholder="Search or type degree..."
                   icon={GraduationCap}
                   required
-                  otherLabel="Other degree not listed"
                 />
                 <AnimatedSelect
                   label="Year"

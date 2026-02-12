@@ -5,7 +5,6 @@ import {
   GraduationCap,
   Search,
   Loader2,
-  Plus,
   X,
   ChevronDown,
 } from "lucide-react";
@@ -23,21 +22,17 @@ export default function CollegeSearchInput({
   value,
   onChange,
   required = false,
-  label = "College / University",
-  placeholder = "Search your college...",
+  label = "College/University/School Name",
+  placeholder = "Search or type your college name...",
 }: CollegeSearchInputProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [showOtherInput, setShowOtherInput] = useState(false);
-  const [otherValue, setOtherValue] = useState("");
-  const [otherError, setOtherError] = useState("");
-  const [saving, setSaving] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Close dropdown on outside click
+  // Close dropdown on outside click and commit typed value
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (
@@ -45,11 +40,15 @@ export default function CollegeSearchInput({
         !containerRef.current.contains(e.target as Node)
       ) {
         setIsOpen(false);
+        // If user typed something but didn't select from dropdown, use what they typed
+        if (query.trim() && !value) {
+          onChange(query.trim());
+        }
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [query, value, onChange]);
 
   // Debounced search
   useEffect(() => {
@@ -91,64 +90,13 @@ export default function CollegeSearchInput({
       onChange(collegeName);
       setQuery("");
       setIsOpen(false);
-      setShowOtherInput(false);
     },
     [onChange],
   );
 
-  const handleOtherClick = () => {
-    setShowOtherInput(true);
-    setIsOpen(false);
-    setOtherError("");
-    setOtherValue("");
-  };
-
-  const handleOtherSubmit = async () => {
-    const trimmed = otherValue.trim();
-
-    if (trimmed.length < 4) {
-      setOtherError("Please enter the full college name");
-      return;
-    }
-
-    if (trimmed.length < 10 && /^[A-Z]+$/.test(trimmed)) {
-      setOtherError("Please enter the full name, not an abbreviation");
-      return;
-    }
-
-    setSaving(true);
-    setOtherError("");
-
-    try {
-      const res = await fetch("/api/colleges", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: trimmed }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setOtherError(data.error || "Failed to add college");
-        return;
-      }
-
-      // Select the newly added college
-      handleSelect(data.name);
-      setShowOtherInput(false);
-      setOtherValue("");
-    } catch {
-      setOtherError("Something went wrong. Please try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleClear = () => {
     onChange("");
     setQuery("");
-    setShowOtherInput(false);
-    setOtherValue("");
   };
 
   return (
@@ -159,7 +107,7 @@ export default function CollegeSearchInput({
       </label>
 
       {/* Selected Value Display */}
-      {value && !showOtherInput ? (
+      {value ? (
         <div className="flex items-center gap-2 w-full pl-10 pr-3 py-2.5 bg-gray-900 border border-cyan-500/50 rounded-lg text-white text-sm relative">
           <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cyan-400" />
           <span className="flex-1 truncate">{value}</span>
@@ -171,62 +119,8 @@ export default function CollegeSearchInput({
             <X size={14} />
           </button>
         </div>
-      ) : showOtherInput ? (
-        /* "Other" input mode */
-        <div className="space-y-2">
-          <div className="relative">
-            <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <input
-              type="text"
-              value={otherValue}
-              onChange={(e) => {
-                setOtherValue(e.target.value);
-                setOtherError("");
-              }}
-              placeholder="Enter your full college name..."
-              className="w-full pl-10 pr-3 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-all text-sm"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleOtherSubmit();
-                }
-              }}
-            />
-          </div>
-          {otherError && <p className="text-red-400 text-xs">{otherError}</p>}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={handleOtherSubmit}
-              disabled={saving || !otherValue.trim()}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-cyan-400 text-sm hover:bg-cyan-500/30 transition-colors disabled:opacity-50"
-            >
-              {saving ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <Plus size={14} />
-              )}
-              {saving ? "Adding..." : "Add College"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setShowOtherInput(false);
-                setOtherValue("");
-                setOtherError("");
-              }}
-              className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 text-sm hover:bg-gray-700 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-          <p className="text-gray-500 text-xs">
-            ⚠️ Please enter the full college name without abbreviations
-          </p>
-        </div>
       ) : (
-        /* Search input */
+        /* Search input - user can type freely */
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input
@@ -238,6 +132,14 @@ export default function CollegeSearchInput({
               if (!isOpen) setIsOpen(true);
             }}
             onFocus={() => setIsOpen(true)}
+            onBlur={() => {
+              // Short delay to allow dropdown clicks to register
+              setTimeout(() => {
+                if (query.trim() && !value) {
+                  onChange(query.trim());
+                }
+              }, 200);
+            }}
             placeholder={placeholder}
             className="w-full pl-10 pr-8 py-2.5 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-all text-sm"
           />
@@ -278,26 +180,17 @@ export default function CollegeSearchInput({
                   ) : query.length >= 2 ? (
                     <div className="py-3 px-4">
                       <p className="text-gray-500 text-sm">
-                        No colleges found for &ldquo;{query}&rdquo;
+                        No match found — your typed name will be used
                       </p>
                     </div>
                   ) : (
                     <div className="py-3 px-4">
                       <p className="text-gray-500 text-sm">
-                        Type to search colleges...
+                        Type to search or enter your college name...
                       </p>
                     </div>
                   )}
                 </div>
-                {/* Always-visible sticky footer */}
-                <button
-                  type="button"
-                  onClick={handleOtherClick}
-                  className="w-full text-left px-4 py-2.5 text-sm text-purple-400 hover:bg-purple-500/10 transition-colors flex items-center gap-2 border-t border-gray-600 shrink-0"
-                >
-                  <Plus size={14} />
-                  My college is not listed
-                </button>
               </motion.div>
             )}
           </AnimatePresence>

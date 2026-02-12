@@ -655,7 +655,7 @@ export default function ProfilePage() {
                       <CollegeSearchInput
                         value={editForm.college}
                         onChange={(val) => handleEditChange("college", val)}
-                        label="College"
+                        label="College/University/School Name"
                       />
                     </div>
                   </div>
@@ -663,7 +663,7 @@ export default function ProfilePage() {
               ) : (
                 <EditableField
                   icon={Building2}
-                  label="College"
+                  label="College/University/School"
                   value={profile?.college}
                   field="college"
                   color="yellow"
@@ -726,10 +726,9 @@ export default function ProfilePage() {
                         value={editForm.degree}
                         onChange={(val) => handleEditChange("degree", val)}
                         options={degreeOptions}
-                        label="Degree"
-                        placeholder="Search degree..."
+                        label="Degree/Grade"
+                        placeholder="Search or type degree..."
                         icon={GraduationCap}
-                        otherLabel="Other degree not listed"
                       />
                     </div>
                   </div>
@@ -737,7 +736,7 @@ export default function ProfilePage() {
               ) : (
                 <EditableField
                   icon={GraduationCap}
-                  label="Degree"
+                  label="Degree/Grade"
                   value={profile?.degree}
                   field="degree"
                   color="purple"
