@@ -534,28 +534,40 @@ export default function Home() {
               UIET Welcomes You
             </h2>
 
-            <div className="flex flex-row items-center justify-center gap-2 md:gap-8">
-              {/* University Logo */}
-              <div className="relative w-[160px] h-[160px] md:w-[240px] md:h-[240px] hover:scale-105 transition-transform duration-300 rounded-full overflow-hidden flex items-center justify-center p-4">
-                <Image
-                  src="/uni-logo-1.png"
-                  alt="CSJMU University Logo"
-                  fill
-                  className="object-contain drop-shadow-[0_0_15px_rgba(0,240,255,0.3)] filter brightness-110 contrast-125"
-                />
-                {/* Subtle glow behind */}
-                <div className="absolute inset-0 bg-[#00F0FF]/5 blur-2xl -z-10 rounded-full" />
+            <div className="flex flex-col items-center gap-4">
+              {/* Row 1: University Logo + CSJMIF Logo */}
+              <div className="flex flex-row items-center justify-center gap-2 md:gap-8">
+                {/* University Logo */}
+                <div className="relative w-[140px] h-[140px] md:w-[200px] md:h-[200px] hover:scale-105 transition-transform duration-300 rounded-full overflow-hidden flex items-center justify-center p-4">
+                  <Image
+                    src="/uni-logo-1.png"
+                    alt="CSJMU University Logo"
+                    fill
+                    className="object-contain drop-shadow-[0_0_15px_rgba(0,240,255,0.3)] filter brightness-110 contrast-125"
+                  />
+                  <div className="absolute inset-0 bg-[#00F0FF]/5 blur-2xl -z-10 rounded-full" />
+                </div>
+
+                {/* CSJMIF Logo */}
+                <div className="relative w-[95px] h-[95px] md:w-[140px] md:h-[140px] hover:scale-105 transition-transform duration-300 rounded-full overflow-hidden flex items-center justify-center p-4">
+                  <Image
+                    src="/csjmif.png"
+                    alt="CSJMIF Logo"
+                    fill
+                    className="object-contain drop-shadow-[0_0_15px_rgba(230,97,255,0.3)] filter brightness-110 contrast-125"
+                  />
+                  <div className="absolute inset-0 bg-[#E661FF]/5 blur-2xl -z-10 rounded-full" />
+                </div>
               </div>
 
-              {/* NAAC Logo */}
-              <div className="relative w-[160px] h-[160px] md:w-[240px] md:h-[240px] hover:scale-105 transition-transform duration-300 rounded-full overflow-hidden flex items-center justify-center p-4">
+              {/* Row 2: NAAC Grade Logo (smaller) */}
+              <div className="relative w-[100px] h-[100px] md:w-[140px] md:h-[140px] hover:scale-105 transition-transform duration-300 rounded-full overflow-hidden flex items-center justify-center p-3">
                 <Image
                   src="/naac-5.png"
                   alt="NAAC A++ Accreditation"
                   fill
                   className="object-contain drop-shadow-[0_0_1px_rgba(255,0,60,0.3)] filter brightness-110 contrast-125"
                 />
-                {/* Subtle glow behind */}
                 <div className="absolute inset-0 bg-[#FF003C]/5 blur-2xl -z-10 rounded-full" />
               </div>
             </div>

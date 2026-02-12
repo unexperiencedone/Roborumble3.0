@@ -476,7 +476,7 @@ export default function OnboardingPage() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-4 space-y-4"
+              className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-4 space-y-4 overflow-visible"
             >
               <CollegeSearchInput
                 value={formData.college}
@@ -486,7 +486,7 @@ export default function OnboardingPage() {
                 }}
                 required
               />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 relative z-0">
                 <SearchableSelect
                   label="Degree"
                   value={formData.degree}
