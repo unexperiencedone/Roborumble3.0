@@ -53,9 +53,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "Team not found" }, { status: 404 });
         }
 
-        // Check same-college rule
+        // Check same-college rule (unless it's an esports team)
         const leader = team.leaderId as any;
-        if (leader.college !== profile.college) {
+        if (!team.isEsports && leader.college !== profile.college) {
             return NextResponse.json(
                 { message: `Cross-college teams are not allowed. This team is for students of ${leader.college}.` },
                 { status: 403 }
