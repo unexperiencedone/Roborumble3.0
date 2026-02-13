@@ -172,6 +172,7 @@ export default function TeamPage() {
     const [teamSearchResults, setTeamSearchResults] = useState<TeamData[]>([]);
     const [availableTeams, setAvailableTeams] = useState<TeamData[]>([]);
     const [availableTeamsLoading, setAvailableTeamsLoading] = useState(false);
+    const [requestedTeamIds, setRequestedTeamIds] = useState<string[]>([]);
 
     // Toast message
     const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
@@ -389,6 +390,7 @@ export default function TeamPage() {
 
             if (res.ok) {
                 showToast("Join request sent!", "success");
+                setRequestedTeamIds(prev => [...prev, teamId]);
             } else {
                 showToast(data.message, "error");
             }
@@ -926,19 +928,24 @@ export default function TeamPage() {
                                                 </div>
                                             </div>
                                             <motion.button
-                                                whileHover={{ scale: 1.02 }}
-                                                whileTap={{ scale: 0.98 }}
-                                                onClick={() => requestJoin(t._id)}
-                                                disabled={actionLoading === `join-${t._id}`}
-                                                className="px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto"
-                                            >
-                                                {actionLoading === `join-${t._id}` ? (
-                                                    <Loader2 size={16} className="animate-spin" />
-                                                ) : (
-                                                    <Send size={16} />
-                                                )}
-                                                Request to Join
-                                            </motion.button>
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => requestJoin(t._id)}
+                                            disabled={actionLoading === `join-${t._id}` || requestedTeamIds.includes(t._id)}
+                                            className={`px-4 py-2 border rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto ${
+                                                requestedTeamIds.includes(t._id)
+                                                    ? "bg-gray-700/50 border-gray-600 text-gray-400"
+                                                    : "bg-cyan-500/20 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/30"
+                                            }`}
+                                        >
+                                            {actionLoading === `join-${t._id}` ? (
+                                                <Loader2 size={16} className="animate-spin" />
+                                            ) : requestedTeamIds.includes(t._id) ? (
+                                                <Check size={16} />
+                                            ) : (
+                                                <Send size={16} />
+                                            )}
+                                            {requestedTeamIds.includes(t._id) ? "Requested" : "Request to Join"}
+                                        </motion.button>
                                         </motion.div>
                                     ))}
                                 </div>
@@ -994,18 +1001,23 @@ export default function TeamPage() {
                                                 </p>
                                             </div>
                                             <motion.button
-                                                whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => requestJoin(t._id)}
-                                                disabled={actionLoading === `join-${t._id}`}
-                                                className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto"
+                                                disabled={actionLoading === `join-${t._id}` || requestedTeamIds.includes(t._id)}
+                                                className={`px-4 py-2 border rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto ${
+                                                    requestedTeamIds.includes(t._id)
+                                                        ? "bg-gray-700/50 border-gray-600 text-gray-400"
+                                                        : "bg-cyan-500/20 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/30"
+                                                }`}
                                             >
                                                 {actionLoading === `join-${t._id}` ? (
                                                     <Loader2 size={16} className="animate-spin" />
+                                                ) : requestedTeamIds.includes(t._id) ? (
+                                                    <Check size={16} />
                                                 ) : (
                                                     <UserPlus size={16} />
                                                 )}
-                                                Request to Join
+                                                {requestedTeamIds.includes(t._id) ? "Requested" : "Request to Join"}
                                             </motion.button>
                                         </div>
                                     ))}

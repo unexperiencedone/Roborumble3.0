@@ -55,32 +55,15 @@ export async function POST(req: Request) {
         const isLeader = team.leaderId.toString() === profile._id.toString();
 
         if (isLeader) {
-            // Leader is leaving - disband the entire team
+            // Delete the team - this triggers the cascading hooks in Team.ts
+            // which handles unsetting team IDs for all members, deleting registrations and carts.
+            await Team.findOneAndDelete({ _id: team._id });
 
-            // Get all member IDs
-            const memberIds = team.members || [];
-
-            // Clear team ID for all members
-            const updateData: any = {};
-            if (isEsports) {
-                updateData.esportsTeamId = 1;
-            } else {
-                updateData.currentTeamId = 1;
-            }
-
-            await Profile.updateMany(
-                { _id: { $in: memberIds } },
-                { $unset: updateData }
-            );
-
-            // Clear any pending invitations that reference this team
+            // Clear any pending invitations that reference this team from ALL profiles
             await Profile.updateMany(
                 { invitations: team._id },
                 { $pull: { invitations: team._id } }
             );
-
-            // Delete the team
-            await Team.findByIdAndDelete(team._id);
 
             return NextResponse.json({
                 message: "Team has been disbanded. All members have been removed.",
@@ -88,22 +71,14 @@ export async function POST(req: Request) {
             });
         } else {
             // Member is leaving - just remove from team
-
-            // Remove from team members
             await Team.findByIdAndUpdate(team._id, {
                 $pull: { members: profile._id },
             });
 
             // Clear user's team ID
-            const updateData: any = {};
-            if (isEsports) {
-                updateData.esportsTeamId = 1;
-            } else {
-                updateData.currentTeamId = 1;
-            }
-
+            const unsetField = isEsports ? "esportsTeamId" : "currentTeamId";
             await Profile.findByIdAndUpdate(profile._id, {
-                $unset: updateData,
+                $unset: { [unsetField]: 1 },
             });
 
             return NextResponse.json({

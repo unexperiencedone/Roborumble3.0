@@ -104,11 +104,18 @@ export async function POST(req: Request) {
                 return NextResponse.json({ message: "userId is required" }, { status: 400 });
             }
 
-            // Must be a team leader
-            const team = await Team.findOne({ leaderId: profile._id });
+            const type = body.type; // 'esports' or null/undefined
+            const isEsports = type === "esports";
+
+            // Must be a team leader for the specific type
+            const team = await Team.findOne({ 
+                leaderId: profile._id,
+                isEsports: !!isEsports
+            });
+            
             if (!team) {
                 return NextResponse.json(
-                    { message: "You are not a team leader" },
+                    { message: `You are not a leader of ${isEsports ? "an esports" : "a"} team` },
                     { status: 403 }
                 );
             }

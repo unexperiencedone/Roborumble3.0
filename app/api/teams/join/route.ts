@@ -106,6 +106,8 @@ export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const clerkId = searchParams.get("clerkId");
+        const type = searchParams.get("type"); // 'esports' or null
+        const isEsports = type === "esports";
 
         if (!clerkId) {
             return NextResponse.json({ message: "clerkId is required" }, { status: 400 });
@@ -118,14 +120,18 @@ export async function GET(req: Request) {
             return NextResponse.json({ message: "Complete profile details" }, { status: 404 });
         }
 
-        // Must be a team leader
-        const team = await Team.findOne({ leaderId: profile._id }).populate(
+        // Find the team where this user is leader and matches the requested type
+        const team = await Team.findOne({ 
+            leaderId: profile._id,
+            isEsports: !!isEsports 
+        }).populate(
             "joinRequests",
             "username email avatarUrl college"
         );
 
         if (!team) {
-            return NextResponse.json({ message: "You are not a team leader" }, { status: 403 });
+            // It's acceptable to have no team, return empty list
+            return NextResponse.json({ joinRequests: [] });
         }
 
         return NextResponse.json({ joinRequests: team.joinRequests });
