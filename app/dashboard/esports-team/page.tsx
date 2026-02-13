@@ -526,17 +526,17 @@ export default function EsportsTeamPage() {
                     </div>
                 </motion.div>
 
-                {/* Esports Warning/Info */}
+                {/* Esports Info Box */}
                 <motion.div
                     variants={itemVariants}
                     className="p-4 bg-green-500/10 border border-green-500/30 rounded-2xl flex items-start gap-4"
                 >
                     <Sparkles className="text-green-400 shrink-0 mt-1" size={20} />
                     <div>
-                        <h4 className="text-green-400 font-bold text-sm uppercase tracking-wider">Cross-College Enabled</h4>
+                        <h4 className="text-green-400 font-bold text-sm uppercase tracking-wider">Open to All Institutions</h4>
                         <p className="text-gray-400 text-xs mt-1 leading-relaxed">
-                            For Esports events only, you can form teams with students from any college. 
-                            Build your ultimate squad!
+                            Esports teams are open to everyone! You can form squads with members from different colleges, schools, or universities. 
+                            Build your ultimate inter-institutional squad today.
                         </p>
                     </div>
                 </motion.div>
