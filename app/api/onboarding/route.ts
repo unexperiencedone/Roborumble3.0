@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs/server";
+import { currentUser, auth } from "@clerk/nextjs/server";
 import connectDB from "@/lib/mongodb";
 import Profile from "@/app/models/Profile";
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json();
-        console.log("Onboarding API received body:", JSON.stringify(body, null, 2));
-        const { clerkId, username, phone, college, city, state, degree, branch, yearOfStudy, interests, bio } = body;
+        const { userId: clerkId } = await auth();
 
-        // Validation
         if (!clerkId) {
             return NextResponse.json(
                 { message: "Not authenticated" },
@@ -17,19 +14,22 @@ export async function POST(req: Request) {
             );
         }
 
+        const body = await req.json();
+        const { username, phone, college, city, state, degree, branch, yearOfStudy, interests, bio } = body;
+
+        // Validation - Removed branch and yearOfStudy from mandatory to support school students
         const mandatoryFields = {
             username: "Username",
             phone: "Mobile number",
             college: "College name",
             city: "City",
             state: "State",
-            degree: "Degree",
-            branch: "Branch",
-            yearOfStudy: "Year of study"
+            degree: "Degree"
         };
 
         for (const [field, label] of Object.entries(mandatoryFields)) {
-            if (!body[field] || (typeof body[field] === "string" && !body[field].trim())) {
+            const value = body[field as keyof typeof body];
+            if (!value || (typeof value === "string" && !value.trim())) {
                 return NextResponse.json(
                     { message: `${label} is required` },
                     { status: 400 }
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
                     state: state?.trim() || "",
                     degree: degree?.trim() || "",
                     branch: branch?.trim() || "",
-                    yearOfStudy: yearOfStudy,
+                    yearOfStudy: yearOfStudy ? parseInt(yearOfStudy.toString()) : undefined,
                     interests,
                     onboardingCompleted: true,
                     email: user?.emailAddresses?.[0]?.emailAddress || "",
@@ -90,8 +90,8 @@ export async function POST(req: Request) {
 
         if (!updatedProfile) {
             return NextResponse.json(
-                { message: "Complete profile details. Please sign up again." },
-                { status: 404 }
+                { message: "Failed to update profile" },
+                { status: 500 }
             );
         }
 
