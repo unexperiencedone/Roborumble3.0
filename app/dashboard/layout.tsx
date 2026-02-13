@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { UserButton, SignOutButton } from "@clerk/nextjs";
+import { UserButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
@@ -51,11 +52,41 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
+    const router = useRouter();
+    const { isLoaded: userLoaded } = useUser();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const [cartCount, setCartCount] = useState(0);
     const [channels, setChannels] = useState<ChannelItem[]>([]);
     const [channelsLoading, setChannelsLoading] = useState(true);
+    const [onboardingChecked, setOnboardingChecked] = useState(false);
+
+    // Check onboarding status
+    useEffect(() => {
+        async function checkOnboarding() {
+            try {
+                const res = await fetch('/api/onboarding');
+                const data = await res.json();
+                
+                if (res.ok && !data.completed) {
+                    router.push('/onboarding');
+                } else if (!res.ok && res.status === 401) {
+                    // Clerk will handle redirect to sign-in if needed, 
+                    // but we stay on current page safely if not authenticated
+                } else {
+                    setOnboardingChecked(true);
+                }
+            } catch (error) {
+                console.error('Failed to check onboarding:', error);
+                // Safe default
+                setOnboardingChecked(true);
+            }
+        }
+        
+        if (userLoaded) {
+            checkOnboarding();
+        }
+    }, [userLoaded, router]);
 
     // Fetch user's event channels with access status
     useEffect(() => {
@@ -82,6 +113,19 @@ export default function DashboardLayout({
         purple: "from-purple-500/20 to-purple-500/5 border-purple-500/30 text-purple-400",
         green: "from-green-500/20 to-green-500/5 border-green-500/30 text-green-400",
     };
+
+    if (!userLoaded || !onboardingChecked) {
+        return (
+            <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
+                    <p className="text-cyan-500 font-mono text-xs animate-pulse tracking-widest uppercase">
+                        Verifying Clearance...
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#020617] flex relative z-10">

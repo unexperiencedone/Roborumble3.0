@@ -220,8 +220,30 @@ export default function OnboardingPage() {
     yearOfStudy: "",
   });
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function checkCurrentStatus() {
+      if (!isLoaded || !user) return;
+      
+      try {
+        const res = await fetch("/api/onboarding");
+        const data = await res.json();
+        
+        if (res.ok && data.completed) {
+          router.push("/dashboard");
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Failed to check status", err);
+        setLoading(false);
+      }
+    }
+    
+    checkCurrentStatus();
+  }, [isLoaded, user, router]);
 
   useEffect(() => {
     if (user?.username)
