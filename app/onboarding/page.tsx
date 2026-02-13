@@ -287,12 +287,8 @@ export default function OnboardingPage() {
         setError("Please select your degree");
         return false;
       }
-      if (!formData.branch.trim()) {
-        setError("Branch/Course is required");
-        return false;
-      }
-      if (!formData.yearOfStudy) {
-        setError("Please select your year of study");
+      if (!formData.degree) {
+        setError("Please select your degree");
         return false;
       }
     }
@@ -351,7 +347,7 @@ export default function OnboardingPage() {
           state: formData.state.trim(),
           degree: formData.degree,
           branch: formData.branch.trim(),
-          yearOfStudy: parseInt(formData.yearOfStudy),
+          yearOfStudy: formData.yearOfStudy ? parseInt(formData.yearOfStudy) : undefined,
           interests: selectedInterests,
         }),
       });
@@ -500,21 +496,19 @@ export default function OnboardingPage() {
                   required
                 />
                 <AnimatedSelect
-                  label="Year"
+                  label="Year (Optional)"
                   name="yearOfStudy"
                   value={formData.yearOfStudy}
                   onChange={handleInputChange}
                   options={yearOptions}
-                  required
                 />
               </div>
               <AnimatedInput
-                label="Branch / Course"
+                label="Branch / Course (Optional)"
                 name="branch"
                 value={formData.branch}
                 onChange={handleInputChange}
                 placeholder="e.g., Computer Science, Mechanical..."
-                required
               />
             </motion.div>
           )}
