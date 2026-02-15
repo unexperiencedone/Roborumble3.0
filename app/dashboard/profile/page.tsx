@@ -20,6 +20,7 @@ import {
   Star,
   Save,
   MapPin,
+  AlertCircle,
   GraduationCap,
   LucideIcon,
   Heart,
@@ -51,6 +52,7 @@ interface UserProfile {
   branch?: string;
   yearOfStudy?: number;
   interests?: string[];
+  boarding?: boolean;
   teamId?: string;
   createdAt: string;
 }
@@ -258,6 +260,7 @@ export default function ProfilePage() {
     degree: "",
     branch: "",
     yearOfStudy: "",
+    boarding: "",
   });
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -289,6 +292,7 @@ export default function ProfilePage() {
             degree: userData.user?.degree || "",
             branch: userData.user?.branch || "",
             yearOfStudy: userData.user?.yearOfStudy?.toString() || "",
+            boarding: userData.user?.boarding ? "yes" : "no",
           });
           console.log("Profile data initialized:", userData.user);
         }
@@ -339,6 +343,7 @@ export default function ProfilePage() {
             ? parseInt(editForm.yearOfStudy)
             : undefined,
           interests: selectedInterests,
+          boarding: editForm.boarding === "yes",
         }),
       });
 
@@ -378,6 +383,7 @@ export default function ProfilePage() {
         degree: profile.degree || "",
         branch: profile.branch || "",
         yearOfStudy: profile.yearOfStudy?.toString() || "",
+        boarding: profile.boarding ? "yes" : "no",
       });
       setSelectedInterests(profile.interests || []);
     }
@@ -692,6 +698,31 @@ export default function ProfilePage() {
                 editValue={editForm.state}
                 onEditChange={handleEditChange}
               />
+              <div className="relative">
+                <EditableField
+                  icon={Building2}
+                  label="Boarding Facility"
+                  value={profile?.boarding ? "Yes" : "No"}
+                  field="boarding"
+                  color="yellow"
+                  isEditing={isEditing}
+                  editValue={editForm.boarding}
+                  onEditChange={handleEditChange}
+                  type="select"
+                  options={[
+                    { value: "yes", label: "Yes" },
+                    { value: "no", label: "No" },
+                  ]}
+                />
+                {isEditing && (
+                  <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex gap-2 items-start">
+                    <AlertCircle size={14} className="text-yellow-500 mt-0.5 shrink-0" />
+                    <p className="text-yellow-500/90 text-xs">
+                      <span className="font-bold">Note:</span> Subject to availability.
+                    </p>
+                  </div>
+                )}
+              </div>
               <div className="md:col-span-2 lg:col-span-3">
                 <EditableField
                   icon={Edit3}

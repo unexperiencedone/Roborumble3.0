@@ -218,6 +218,7 @@ export default function OnboardingPage() {
     degree: "",
     branch: "",
     yearOfStudy: "",
+    boarding: "",
   });
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -226,11 +227,11 @@ export default function OnboardingPage() {
   useEffect(() => {
     async function checkCurrentStatus() {
       if (!isLoaded || !user) return;
-      
+
       try {
         const res = await fetch("/api/onboarding");
         const data = await res.json();
-        
+
         if (res.ok && data.completed) {
           router.push("/dashboard");
         } else {
@@ -241,7 +242,7 @@ export default function OnboardingPage() {
         setLoading(false);
       }
     }
-    
+
     checkCurrentStatus();
   }, [isLoaded, user, router]);
 
@@ -369,8 +370,11 @@ export default function OnboardingPage() {
           state: formData.state.trim(),
           degree: formData.degree,
           branch: formData.branch.trim(),
-          yearOfStudy: formData.yearOfStudy ? parseInt(formData.yearOfStudy) : undefined,
+          yearOfStudy: formData.yearOfStudy
+            ? parseInt(formData.yearOfStudy)
+            : undefined,
           interests: selectedInterests,
+          boarding: formData.boarding,
         }),
       });
       const data = await response.json();
@@ -563,6 +567,54 @@ export default function OnboardingPage() {
                   required
                 />
               </div>
+
+              <div className="space-y-3 pt-2 border-t border-gray-700/50">
+                <label className="text-white text-sm font-medium block">
+                  Do you need a boarding facility?{" "}
+                  <span className="text-cyan-400">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, boarding: "yes" }))
+                    }
+                    className={`py-2.5 px-4 rounded-lg border text-sm font-medium transition-all ${
+                      formData.boarding === "yes"
+                        ? "bg-cyan-500/20 border-cyan-500 text-cyan-400"
+                        : "bg-gray-800/50 border-gray-700 text-gray-400 hover:border-gray-600"
+                    }`}
+                  >
+                    Yes, I need it
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, boarding: "no" }))
+                    }
+                    className={`py-2.5 px-4 rounded-lg border text-sm font-medium transition-all ${
+                      formData.boarding === "no"
+                        ? "bg-cyan-500/20 border-cyan-500 text-cyan-400"
+                        : "bg-gray-800/50 border-gray-700 text-gray-400 hover:border-gray-600"
+                    }`}
+                  >
+                    No, I don't
+                  </button>
+                </div>
+
+                <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex gap-2 items-start">
+                  <AlertCircle
+                    size={16}
+                    className="text-yellow-500 mt-0.5 shrink-0"
+                  />
+                  <p className="text-yellow-500/90 text-xs">
+                    <span className="font-bold">Disclaimer:</span> Boarding
+                    facility is subject to availability it may or may not be
+                    given to you so you should be prepared accordingly.
+                  </p>
+                </div>
+              </div>
+
               <div className="p-3 bg-cyan-500/5 border border-cyan-500/20 rounded-lg">
                 <p className="text-zinc-500 text-xs">
                   📍 This helps us customize event locations and logistics for

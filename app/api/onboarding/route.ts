@@ -15,7 +15,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { username, phone, college, city, state, degree, branch, yearOfStudy, interests, bio } = body;
+        const { username, phone, college, city, state, degree, branch, yearOfStudy, interests, bio, boarding } = body;
 
         // Validation - Removed branch and yearOfStudy from mandatory to support school students
         const mandatoryFields = {
@@ -83,6 +83,7 @@ export async function POST(req: Request) {
                     lastName: user?.lastName || "",
                     avatarUrl: user?.imageUrl || "",
                     role: "user",
+                    boarding: boarding === "yes" || boarding === true,
                 },
             },
             { new: true, upsert: true, setDefaultsOnInsert: true }
