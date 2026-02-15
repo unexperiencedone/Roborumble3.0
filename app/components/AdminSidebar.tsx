@@ -12,7 +12,8 @@ import {
   Shield,
   Menu,
   X,
-  IndianRupee
+  IndianRupee,
+  Hotel
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
@@ -42,6 +43,7 @@ export default function AdminSidebar() {
     { name: "Users List", icon: Users, href: "/admin/users" },
     { name: "Announcements", icon: Shield, href: "/admin/announcements" },
     { name: "Events", icon: Calendar, href: "/admin/events" },
+    { name: "Boarding", icon: Hotel, href: "/admin/boarding" },
     { name: "Settings", icon: Settings, href: "/admin/settings" },
   ];
 
