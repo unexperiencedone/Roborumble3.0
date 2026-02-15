@@ -33,7 +33,7 @@ export async function GET(req: Request) {
 export async function PATCH(req: Request) {
     try {
         const body = await req.json();
-        const { clerkId, username, phone, college, city, state, degree, branch, yearOfStudy } = body;
+        const { clerkId, username, phone, college, city, state, degree, branch, yearOfStudy, boarding } = body;
 
         if (!clerkId) {
             return NextResponse.json({ error: "clerkId is required" }, { status: 400 });
@@ -69,6 +69,7 @@ export async function PATCH(req: Request) {
             ...(clerkUser?.emailAddresses?.[0]?.emailAddress && { email: clerkUser.emailAddresses[0].emailAddress }),
             ...(clerkUser?.firstName && { firstName: clerkUser.firstName }),
             ...(clerkUser?.lastName && { lastName: clerkUser.lastName }),
+            ...(boarding !== undefined && { boarding: boarding === "yes" || boarding === true }),
         };
 
         const updatedUser = await Profile.findOneAndUpdate(

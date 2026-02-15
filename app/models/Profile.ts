@@ -23,6 +23,7 @@ export interface IProfile extends Document {
     registeredEvents: string[];
     paidEvents: string[];
     onboardingCompleted: boolean;
+    boarding?: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -68,6 +69,7 @@ const ProfileSchema = new Schema<IProfile>(
 
         // Status
         onboardingCompleted: { type: Boolean, default: false },
+        boarding: { type: Boolean, default: false },
     },
     { timestamps: true }
 );
