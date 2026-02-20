@@ -35,7 +35,7 @@ const ProfileSchema = new Schema<IProfile>(
         // Clerk Integration
         clerkId: { type: String, unique: true, sparse: true },
         googleId: { type: String, unique: true, sparse: true }, // Google Subject ID
-        email: { type: String, required: true },
+        email: { type: String, required: true, lowercase: true, trim: true },
         firstName: String,
         lastName: String,
         avatarUrl: String,

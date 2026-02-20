@@ -10,7 +10,7 @@ async function getAuthenticatedUser() {
         return {
             // @ts-ignore
             id: nextSession.user.id || `google_${nextSession.user.email}`, // Fallback ID if needed
-            email: nextSession.user.email,
+            email: nextSession.user.email.toLowerCase(),
             firstName: nextSession.user.name?.split(" ")[0] || "",
             lastName: nextSession.user.name?.split(" ")[1] || "",
             avatarUrl: nextSession.user.image || "",

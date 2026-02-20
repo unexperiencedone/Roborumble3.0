@@ -30,8 +30,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 try {
                     log("Connecting to DB...");
                     await connectDB();
-                    log(`Finding user with email: [${credentials.email}]`);
-                    const user = await Profile.findOne({ email: credentials.email as string }).select("+password").lean();
+                    const email = (credentials.email as string).toLowerCase();
+                    log(`Finding user with email: [${email}]`);
+                    const user = await Profile.findOne({ email }).select("+password").lean();
                     log(`User found: ${!!user}`);
                     
                     if (!user) {
@@ -78,7 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 try {
                     await connectDB()
                     if (!user.email) return false;
-                    const email = user.email as string;
+                    const email = (user.email as string).toLowerCase();
 
                     // Check if user exists
                     let existingUser = await Profile.findOne({ email })
@@ -120,7 +121,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             try {
                 log(`Session callback for email: ${session.user?.email}`);
                 await connectDB();
-                const dbUser = await Profile.findOne({ email: session.user.email });
+                const email = session.user?.email?.toLowerCase();
+                const dbUser = await Profile.findOne({ email });
                 if (dbUser) {
                     log(`DB User found: ${dbUser._id}, clerkId: ${dbUser.clerkId}`);
                     // @ts-ignore
