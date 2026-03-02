@@ -55,12 +55,7 @@ const navItems = [
     icon: FileText,
     color: "purple",
   },
-  {
-    href: "/dashboard/dance",
-    label: "Street Dance Battle",
-    icon: Music,
-    color: "green",
-  },
+
   {
     href: "/dashboard/communities",
     label: "Communities",

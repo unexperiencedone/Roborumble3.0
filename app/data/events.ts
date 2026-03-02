@@ -223,32 +223,6 @@ export const events = [
     ],
     image: "/defence-expo.jpeg"
   },
-  {
-    id: "dance-performance",
-    title: "Street Dance Battle",
-    category: "Performance",
-    icon: Music,
-    desc: "Hit the streets and own the stage. Whether you're a solo artist or a powerhouse crew, bring your rhythm and raw energy to the ultimate street dance showdown.",
-    teamSize: "1-5 Members",
-    prize: "Gift Hampers / Live Voting",
-    cost: 0,
-    rules: [
-      "Category: Solo or Group (3-5 members).",
-      "Time Limit: 4–5 minutes per performance.",
-      "Style: Any dance style is welcome.",
-      "Track: Participants must bring their track in a pen drive.",
-      "Judging: Based on choreography, energy, and rhythm."
-    ],
-    specifications: [
-      "Stage Size: Standard auditorium performance space.",
-      "Audio: Professional line-out support provided.",
-      "Lighting: Standard stage lighting (no custom programmed sequences)."
-    ],
-    gameplay: [
-      "Selection Phase: Video submission required for shortlisting.",
-      "Finals: Live performance during the event evening."
-    ],
-    image: "/dance.png"
-  }
+
 
 ];
