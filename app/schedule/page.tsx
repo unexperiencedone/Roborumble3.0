@@ -193,19 +193,19 @@ export default function SchedulePage() {
         </h1>
 
         {/* --- TABS --- */}
-        <div className="flex flex-wrap justify-center gap-8 mb-16">
+        <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center gap-4 md:gap-8 mb-16 overflow-x-auto no-scrollbar w-full px-4 scroll-smooth">
           {scheduleData.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={`
-                relative px-8 py-4 md:px-12 md:py-6 rounded-lg border-2 
+                relative px-6 py-3 md:px-12 md:py-6 rounded-lg border-2 
                 flex flex-col items-center justify-center cursor-pointer
                 transition-all duration-500 ease-out group font-['Orbitron']
-                ${
-                  activeTab === item.id
-                    ? "border-[#00FF9E] bg-[#00FF00]/10 shadow-[0_0_30px_rgba(0,255,0,0.4)] scale-105"
-                    : "border-zinc-800 bg-black/50 text-zinc-500 hover:border-[#00FF9E]/50 hover:text-[#00FF9E]/80"
+                shrink-0
+                ${activeTab === item.id
+                  ? "border-[#00FF9E] bg-[#00FF00]/10 shadow-[0_0_30px_rgba(0,255,0,0.4)] scale-105"
+                  : "border-zinc-800 bg-black/50 text-zinc-500 hover:border-[#00FF9E]/50 hover:text-[#00FF9E]/80"
                 }
               `}
             >
