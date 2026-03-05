@@ -46,12 +46,7 @@ export default function SchedulePage() {
           venue: "Innovation Cell",
           type: "Competition",
         },
-        {
-          time: "10:00 AM",
-          title: "Line Following Bot",
-          venue: "Innovation Cell",
-          type: "Competition",
-        },
+
         {
           time: "10:00 AM",
           title: "Pick and Place (Round 1)",
@@ -61,13 +56,13 @@ export default function SchedulePage() {
         {
           time: "01:00 PM",
           title: "Inauguration",
-          venue: "Auditorium",
+          venue: "L1",
           type: "General",
         },
         {
           time: "02:00 PM",
           title: "Defence Talk",
-          venue: "Auditorium",
+          venue: "L1",
           type: "Seminar",
         }
       ],
@@ -122,6 +117,12 @@ export default function SchedulePage() {
       month: "Mar",
       dayName: "Day 3",
       events: [
+        {
+          time: "10:00 AM",
+          title: "Line Following Bot",
+          venue: "Innovation Cell",
+          type: "Competition",
+        },
         {
           time: "10:00 AM",
           title: "Robo War Finals",

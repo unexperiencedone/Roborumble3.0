@@ -22,6 +22,7 @@ const publicRoutes = [
     "/register",
     "/admin",          // Admin uses legacy JWT cookie auth, not NextAuth — AdminLayoutClient handles auth guard
     "/admin/login",
+    "/api/admin",      // Admin APIs use custom verifyAdminRequest, not NextAuth
 ];
 
 export default auth((req) => {
@@ -31,6 +32,7 @@ export default auth((req) => {
     const isPublicRoute = publicRoutes.some(route => 
         nextUrl.pathname === route || nextUrl.pathname.startsWith(`${route}/`)
     ) || nextUrl.pathname.startsWith("/api/auth") 
+      || nextUrl.pathname.startsWith("/api/admin") 
       || nextUrl.pathname.startsWith("/api/webhooks")
       || nextUrl.pathname.startsWith("/api/uploadthing")
       || nextUrl.pathname === "/sitemap.xml"

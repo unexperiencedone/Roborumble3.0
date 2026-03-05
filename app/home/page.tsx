@@ -648,14 +648,14 @@ export default function Home() {
             </a>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-12 text-zinc-500 font-mono text-sm mb-16">
+          <div className="flex flex-wrap justify-center gap-12 text-zinc-500 font-mono text-base md:text-lg mb-16">
             <div className="flex items-center gap-3">
-              <Calendar size={18} className="text-[#E661FF]" />
-              <span className="tracking-tighter">16-18 March</span>
+              <Calendar size={22} className="text-[#E661FF]" />
+              <span className="tracking-tighter text-xl md:text-2xl font-bold text-zinc-300">16-18 March</span>
             </div>
             <div className="flex items-center gap-3">
-              <MapPin size={18} className="text-[#E661FF]" />
-              <span className="tracking-tighter">CSJMU_CAMPUS_KANPUR</span>
+              <MapPin size={22} className="text-[#E661FF]" />
+              <span className="tracking-tighter text-xl md:text-2xl font-bold text-zinc-300">CSJMU_CAMPUS_KANPUR</span>
             </div>
           </div>
 
