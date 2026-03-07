@@ -128,6 +128,25 @@ export default function RegisterPage() {
                 <FaEnvelope className="text-lg" />
                 <span>Sign up with Email</span>
               </button>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/10"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-[#020617]/50 text-gray-500 backdrop-blur-sm">External</span>
+                </div>
+              </div>
+
+              <a
+                href="https://forms.gle/C1KQV4PNRtgWnwLB6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30 text-white h-12 rounded-xl font-medium flex items-center justify-center gap-3 hover:from-purple-600/30 hover:to-blue-600/30 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Register in events through google form</span>
+                <FaArrowRight className="text-sm" />
+              </a>
             </div>
           ) : (
             <form onSubmit={handleLegacySignUp} className="space-y-4">
