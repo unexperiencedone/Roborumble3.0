@@ -94,8 +94,14 @@ const teamData = {
       role: "Disciplinary Head",
       img: "/disciplinary_head.png",
       socials: [
-        { icon: FaInstagram, link: "https://www.instagram.com/krsna0031?igsh=MXZtcnZwbGRwNHpmdA==" },
-        { icon: FaLinkedinIn, link: "https://www.linkedin.com/in/krsna0031?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+        {
+          icon: FaInstagram,
+          link: "https://www.instagram.com/krsna0031?igsh=MXZtcnZwbGRwNHpmdA==",
+        },
+        {
+          icon: FaLinkedinIn,
+          link: "https://www.linkedin.com/in/krsna0031?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        },
         { icon: HiOutlineMail, link: "mailto:i.krsna0031@gmail.com" },
       ],
     },
@@ -158,7 +164,10 @@ const teamData = {
           icon: FaInstagram,
           link: "https://www.instagram.com/me.aman_2005?igsh=azJhMHpzOWtwOTM3",
         },
-        { icon: FaLinkedinIn, link: "https://www.linkedin.com/in/maurya-aman-satyendra-a19835368?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
+        {
+          icon: FaLinkedinIn,
+          link: "https://www.linkedin.com/in/maurya-aman-satyendra-a19835368?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+        },
         { icon: HiOutlineMail, link: "mailto:mauryaman2005@gmail.com" },
       ],
     },
@@ -193,7 +202,7 @@ const teamData = {
     },
     {
       name: "MIK",
-      role: "Sponsorship and Outreach Head",
+      role: "Marketing, Sponsorship and Outreach Head",
       img: "/MIK.jpeg",
       socials: [
         { icon: FaInstagram, link: "#" },
@@ -246,7 +255,10 @@ const teamData = {
       img: "/anant.jpeg",
       socials: [
         { icon: FaInstagram, link: "#" },
-        { icon: FaLinkedinIn, link: "https://www.linkedin.com/in/ananttirupati?utm_source=share_via&utm_content=profile&utm_medium=member_android" },
+        {
+          icon: FaLinkedinIn,
+          link: "https://www.linkedin.com/in/ananttirupati?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        },
         { icon: HiOutlineMail, link: "#" },
       ],
     },
@@ -300,7 +312,10 @@ const teamData = {
       role: "Contributor",
       img: "/sumit.jpeg",
       socials: [
-        { icon: FaInstagram, link: "https://www.instagram.com/ska_0770?igsh=cGFzd3NvdWZvaHU3" },
+        {
+          icon: FaInstagram,
+          link: "https://www.instagram.com/ska_0770?igsh=cGFzd3NvdWZvaHU3",
+        },
         {
           icon: FaLinkedinIn,
           link: "https://www.linkedin.com/in/sumit-kumar-122671322/",
@@ -342,8 +357,12 @@ export default function TeamSection() {
     if (scrollRef.current) {
       const cardWidth = 128 + 24; // w-32 (128px) + gap-6 (24px)
       const containerWidth = scrollRef.current.clientWidth;
-      const scrollPosition = (index * cardWidth) - (containerWidth / 2) + (cardWidth / 2);
-      scrollRef.current.scrollTo({ left: Math.max(0, scrollPosition), behavior: "smooth" });
+      const scrollPosition =
+        index * cardWidth - containerWidth / 2 + cardWidth / 2;
+      scrollRef.current.scrollTo({
+        left: Math.max(0, scrollPosition),
+        behavior: "smooth",
+      });
     }
   };
 
@@ -432,10 +451,11 @@ export default function TeamSection() {
             <button
               key={team}
               onClick={() => setActiveTeam(team as "core" | "tech")}
-              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 border ${activeTeam === team
-                ? "bg-[#00F0FF]/10 border-[#00F0FF] text-[#00F0FF] shadow-[0_0_15px_rgba(0,240,255,0.6)]"
-                : "bg-transparent border-zinc-700 text-zinc-500"
-                }`}
+              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 border ${
+                activeTeam === team
+                  ? "bg-[#00F0FF]/10 border-[#00F0FF] text-[#00F0FF] shadow-[0_0_15px_rgba(0,240,255,0.6)]"
+                  : "bg-transparent border-zinc-700 text-zinc-500"
+              }`}
             >
               {team === "core"
                 ? "Core Team"
