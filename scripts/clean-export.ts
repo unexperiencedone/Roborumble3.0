@@ -25,17 +25,28 @@ async function exportSimpleRegistrations() {
             paymentStatus: { $in: ["initiated", "pending", "verification_pending", "paid", "manual_verified", "verified"] }
         }).toArray();
 
-        const events = await db.collection("events").find({}).toArray();
+        // const events = await db.collection("events").find({}).toArray(); // REPLACED BY HARDCODING
         const teams = await db.collection("teams").find({}).toArray();
         const profiles = await db.collection("profiles").find({}).toArray();
 
         // 2. Create quick lookup dictionaries
-        const eventMap = new Map();
-        for (const e of events) {
-            // Some events might have _id as string, some as ObjectId. Map both just in case.
-            eventMap.set(e._id.toString(), e.title);
-            if (e.eventId) eventMap.set(e.eventId.toString(), e.title); 
-        }
+        // Using hardcoded mapping from events.ts logic
+        const eventMap = new Map([
+            ["robo-obstacle-race", "Robo Obstacle Race"],
+            ["robo-wars", "Robo War"],
+            ["line-following", "Line Following Bot"],
+            ["robo-soccer", "Robo Soccer"],
+            ["pick-and-drop", "Pick and Drop"],
+            ["rc-flying", "RC Flying"],
+            ["e-sports", "E-SPORTS"],
+            ["project-expo", "Showcase & Exhibition"],
+            ["defence-talk", "Defence Talk"],
+            ["defence-expo", "Defence Expo"],
+            ["gokart", "Gokart"],
+            ["paintball", "Paintball"],
+            ["silent-dj", "Silent DJ"],
+            ["band-show", "Band Show"]
+        ]);
 
         const teamMap = new Map();
         for (const t of teams) teamMap.set(t._id.toString(), t);
@@ -47,8 +58,9 @@ async function exportSimpleRegistrations() {
         const csvData = [];
 
         for (const reg of registrations) {
-            // Find Event ID
-            const eventId = reg.eventId?.toString() || "Unknown ID";
+            // Find Event Name
+            const eventIdStr = reg.eventId?.toString();
+            const eventName = (eventIdStr && eventMap.get(eventIdStr)) || eventIdStr || "Unknown Event";
 
             // Find Team & Leader Info
             let teamName = "Individual";
@@ -101,7 +113,7 @@ async function exportSimpleRegistrations() {
             }
 
             csvData.push({
-                EventId: eventId,
+                EventName: eventName,
                 TeamName: teamName,
                 LeaderName: leaderName,
                 LeaderPhone: leaderPhone,
@@ -116,9 +128,9 @@ async function exportSimpleRegistrations() {
         console.log(`Writing ${csvData.length} clean records to CSV...`);
         
         const csvWriter = createObjectCsvWriter({
-            path: 'clean_registrations_export_v4.csv',
+            path: 'clean_registrations_export_v5.csv',
             header: [
-                { id: 'EventId', title: 'Event ID' },
+                { id: 'EventName', title: 'Event Name' },
                 { id: 'TeamName', title: 'Team Name' },
                 { id: 'LeaderName', title: 'Leader Name' },
                 { id: 'LeaderPhone', title: 'Leader Phone' },
@@ -130,7 +142,7 @@ async function exportSimpleRegistrations() {
         });
 
         await csvWriter.writeRecords(csvData);
-        console.log("✅ Successfully created clean_registrations_export_v3.csv");
+        console.log("✅ Successfully created clean_registrations_export_v5.csv");
 
     } catch (error) {
         console.error("❌ Export failed:", error);

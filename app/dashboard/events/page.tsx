@@ -58,6 +58,8 @@ interface EventData {
   ticketTypes?: { [key: string]: number };
   phasedCap?: number;
   externalRegistrationLink?: string;
+  displayDate?: string;
+  displayTime?: string;
 }
 
 interface RegistrationStatus {
@@ -162,6 +164,11 @@ const HorizontalEventCard = ({
   const isVerifying = registration?.status === "verification_pending";
   const Icon = getEventIcon(event.category, event.eventId);
   const { day, month, fullDate, time } = formatDate(event.date);
+
+  const displayDay = event.displayDate ? event.displayDate.split(" ")[1] : day;
+  const displayMonth = event.displayDate ? event.displayDate.split(" ")[0] : month;
+  const displayFullDate = event.displayDate || fullDate;
+  const displayTimeStr = event.displayTime || time;
 
   // Parse team size to get min/max allowed members
   const isTeamEvent =
@@ -353,15 +360,15 @@ const HorizontalEventCard = ({
             <div className="flex items-start gap-4 mb-3">
               <div className="flex flex-col items-center bg-zinc-800/50 rounded-lg p-2 min-w-[60px] border border-white/5">
                 <span className="text-2xl font-black text-white leading-none">
-                  {day}
+                  {displayDay}
                 </span>
                 <span className="text-[10px] font-black text-[#00F0FF] uppercase tracking-wider">
-                  {month}
+                  {displayMonth}
                 </span>
               </div>
               <div className="flex flex-col pt-1">
                 <span className="text-[#E661FF] font-mono text-xs font-bold tracking-wide flex items-center gap-2">
-                  {fullDate} • {time}
+                  {displayFullDate} • {displayTimeStr}
                 </span>
                 <h3 className="text-2xl font-black text-white uppercase tracking-tight group-hover:text-[#00F0FF] transition-colors mt-1">
                   {event.title}
@@ -939,6 +946,8 @@ export default function DashboardEventsPage() {
             fees: se.cost ?? se.fees,
             rules: se.rules || [],
             currentRegistrations: apiEvent?.currentRegistrations || 0,
+            displayDate: se.displayDate,
+            displayTime: se.displayTime,
           } as EventData;
         });
 

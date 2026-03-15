@@ -275,8 +275,8 @@ export const events = [
     title: "Silent DJ",
     category: "Entertainment",
     icon: Music,
-    desc: "Dance to your own beat!\nBook at Lecture Hall Complex from 10\:30 AM to 4\:30 PM",
-    teamSize: "Individual",
+    desc: "Dance to your own beat!\nBook at Lecture Hall Complex from 10:00 AM to 4:30 PM (March 16-18)",
+    teamSize: "Individual/Couple",
     prize: "N/A",
     cost: 0,
     maxRegistrations: 150,
@@ -289,7 +289,9 @@ export const events = [
       "Register via the provided Google Form link."
     ],
     externalRegistrationLink: "https://forms.gle/ssy8ihxQvos2hi7M7",
-    date: "2026-03-17T16:00:00",
+    displayDate: "MAR 16-18",
+    displayTime: "10:00 AM - 04:30 PM",
+    date: "2026-03-16T10:00:00",
     image: "/silent-dj.jpeg"
   },
   {
@@ -297,7 +299,7 @@ export const events = [
     title: "Band Show",
     category: "Entertainment",
     icon: Music,
-    desc: "A spectacular musical night featuring live band performances. Don't miss out!",
+    desc: "Experience an unforgettable musical night at Helipad Ground!\n\nLine-up:\n- 4:30 PM: Opening DJ by Red Bull (Juggernaut)\n- 5:15 PM: Live DJ session by DJ Jockey Play\n- 6:00 PM: Live performance by Star Artist",
     teamSize: "Individual/Couple",
     prize: "N/A",
     ticketTypes: {
@@ -310,6 +312,8 @@ export const events = [
       "Register via the provided Google Form link."
     ],
     externalRegistrationLink: "https://forms.gle/4B61dvHzZZoLh2Ui7",
+    displayDate: "MAR 18",
+    displayTime: "04:30 PM - 07:30 PM",
     date: "2026-03-18T16:30:00",
     image: "/band-show.jpeg"
   }
